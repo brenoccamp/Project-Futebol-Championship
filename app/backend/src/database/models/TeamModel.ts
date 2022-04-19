@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '.';
+// import Match from './MatchModel';
 // import OtherModel from './OtherModel';
 
 class Team extends Model {
@@ -18,7 +19,6 @@ Team.init({
   teamName: {
     type: DataTypes.STRING,
     allowNull: false,
-    field: 'team_name',
   },
 }, {
   // ... Outras configs
@@ -26,12 +26,16 @@ Team.init({
   sequelize: db,
   modelName: 'Team',
   timestamps: false,
+  tableName: 'teams',
 });
 
 /**
   * `Workaround` para aplicar as associations em TS:
   * Associations 1:N devem ficar em uma das instâncias de modelo
   * */
+
+// Team.hasMany(Match, { foreignKey: 'id', as: 'Matches' });
+// Match.belongsTo(Team);
 
 // OtherModel.belongsTo(Teams, { foreignKey: 'campoA', as: 'campoEstrangeiroA' });
 // OtherModel.belongsTo(Teams, { foreignKey: 'campoB', as: 'campoEstrangeiroB' });
