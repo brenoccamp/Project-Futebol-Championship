@@ -1,4 +1,5 @@
 import * as express from 'express';
+import Validate from './app/middlewares/validations';
 
 class App {
   public app: express.Express;
@@ -29,7 +30,7 @@ class App {
   private routes(): void {
     this.app.post(
       '/login',
-      /* middleware de autenticação do body */
+      async (req, res, next) => Validate.login(req, res, next),
       /* controlador de login */
     );
   }
