@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { Request, Response, NextFunction } from 'express';
-import Validate from './app/middlewares/validations';
+import Validate from './app/middlewares/validationsBackup';
 import IAPIResponse from './interfaces/response';
 
 class App {
@@ -32,7 +32,7 @@ class App {
   private routes(): void {
     this.app.post(
       '/login',
-      App.handlerBuilder(Validate.login),
+      /* middleware de autenticação do body */
       /* controlador de login */
     );
   }
