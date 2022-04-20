@@ -1,5 +1,7 @@
 import * as express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import Validate from './app/middlewares/validations';
+import IAPIResponse from './interfaces/response';
 
 class App {
   public app: express.Express;
@@ -12,7 +14,7 @@ class App {
     this.routes();
   }
 
-  private config():void {
+  private config(): void {
     const accessControl: express.RequestHandler = (_req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS,PUT,PATCH');
@@ -30,9 +32,33 @@ class App {
   private routes(): void {
     this.app.post(
       '/login',
-      async (req, res, next) => Validate.login(req, res, next),
+      App.handlerBuilder(Validate.login),
       /* controlador de login */
     );
+  }
+
+  private static handlerBuilder(handler: (
+    req: Request, next?: NextFunction,
+  ) => Promise<IAPIResponse>) {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void | Response> => {
+      try {
+        const response = await handler(req);
+
+        if (response.body) {
+          return res.status(response.statusCode).json({ message: response.body });
+        }
+
+        if (response.err) {
+          return res.status(response.statusCode).json({ error: response.err });
+        }
+
+        if (!response.body && !response.err) return next();
+
+        return res.end();
+      } catch (err) {
+        next(err);
+      }
+    };
   }
 }
 
