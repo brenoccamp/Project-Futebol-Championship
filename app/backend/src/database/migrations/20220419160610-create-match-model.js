@@ -9,16 +9,24 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       homeTeam: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         field: 'home_team',
+        // references: {
+        //   model: 'teams',
+        //   key: 'id',
+        // },
       },
       homeTeamGoals: {
         type: Sequelize.INTEGER,
         field: 'home_team_goals',
       },
       awayTeam: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         field: 'away_team',
+        // references: {
+        //   model: 'teams',
+        //   key: 'id',
+        // },
       },
       awayTeamGoals: {
         type: Sequelize.INTEGER,
@@ -28,16 +36,18 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         field: 'in_progress',
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        field: 'created_at',
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        field: 'updated_at',
-      }
+      // createdAt: {
+      //   allowNull: false,
+      //   type: Sequelize.DATE,
+      //   field: 'created_at',
+      //   defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      // },
+      // updatedAt: {
+      //   allowNull: false,
+      //   type: Sequelize.DATE,
+      //   field: 'updated_at',
+      //   defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      // }
     });
   },
   down: async (queryInterface, _Sequelize) => {

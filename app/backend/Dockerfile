@@ -1,9 +1,11 @@
 FROM node:16-alpine
 
-RUN adduser -D static
-USER static
+WORKDIR /backend
 
-WORKDIR /app/backend
+COPY package.json .
+
+RUN npm install
 
 COPY . .
 
+ENTRYPOINT ["npm", "start"]
