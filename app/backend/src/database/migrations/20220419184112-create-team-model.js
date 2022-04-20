@@ -12,16 +12,18 @@ module.exports = {
         type: Sequelize.STRING,
         field: 'team_name',
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        field: 'created_at',
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        field: 'updated_at',
-      }
+      // createdAt: {
+      //   allowNull: false,
+      //   type: Sequelize.DATE,
+      //   field: 'created_at',
+      //   defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      // },
+      // updatedAt: {
+      //   allowNull: false,
+      //   type: Sequelize.DATE,
+      //   field: 'updated_at',
+      //   defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      // }
     });
   },
   down: async (queryInterface, _Sequelize) => {
