@@ -32,7 +32,7 @@ class App {
   private routes(): void {
     this.app.post(
       '/login',
-      /* middleware de autenticação do body */
+      App.handlerBuilder(Validate.login),
       /* controlador de login */
     );
   }
