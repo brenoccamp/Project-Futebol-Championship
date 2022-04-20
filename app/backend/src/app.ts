@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { Request, Response, NextFunction } from 'express';
-import Validate from './app/middlewares/validations';
+import Validate from './api/middlewares/validations';
 import IAPIResponse from './interfaces/response';
 
 class App {
