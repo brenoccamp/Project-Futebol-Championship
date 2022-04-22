@@ -5,7 +5,7 @@ export interface IUser {
   password: string;
 }
 
-export interface IUserData {
+export interface IUserFullData {
   id: number;
   username: string;
   role: string;
@@ -13,7 +13,7 @@ export interface IUserData {
 }
 
 export interface ILoginUserData {
-  user: IUserData;
+  user: IUserFullData;
   token: string;
 }
 
@@ -23,8 +23,4 @@ export interface IUserController {
 
 export interface IUserService {
   login(user: IUser): Promise<ILoginUserData | boolean>;
-}
-
-export interface IUserModel {
-  login(user: IUser): Promise<IUserData | undefined>;
 }
