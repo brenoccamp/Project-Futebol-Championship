@@ -42,6 +42,11 @@ class App {
       Validate.login,
       this._userController.login,
     );
+
+    this.app.get(
+      '/login/validate',
+      this._userController.loginValidate,
+    );
   }
 }
 

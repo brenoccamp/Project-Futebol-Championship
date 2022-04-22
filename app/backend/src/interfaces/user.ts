@@ -19,8 +19,10 @@ export interface ILoginUserData {
 
 export interface IUserController {
   login(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
+  loginValidate(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
 }
 
 export interface IUserService {
   login(user: IUser): Promise<ILoginUserData | boolean>;
+  loginValidate(token: string): Promise<IUserFullData>;
 }

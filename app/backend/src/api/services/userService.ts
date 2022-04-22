@@ -25,4 +25,11 @@ export default class UserService {
 
     return loginResponse;
   }
+
+  public async loginValidate(token: string): Promise<IUserFullData> {
+    const { email } = Jwt.verifyToken(token);
+    const loginValidateResponse = await this._userModel.findOne({ where: { email } });
+
+    return loginValidateResponse as IUserFullData;
+  }
 }

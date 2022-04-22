@@ -10,4 +10,10 @@ export default abstract class Jwt {
   static generateToken(userData: IUserFullData): string {
     return jwt.sign(userData, Jwt._JWT_SECRET, Jwt._JWT_CONFIG);
   }
+
+  static verifyToken(token: string): IUserFullData {
+    const tokenDecoded = jwt.verify(token, Jwt._JWT_SECRET);
+
+    return tokenDecoded as IUserFullData;
+  }
 }
