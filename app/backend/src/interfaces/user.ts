@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 export interface IUser {
   email: string;
@@ -18,7 +18,7 @@ export interface ILoginUserData {
 }
 
 export interface IUserController {
-  login(req: Request): Promise<Response | void>;
+  login(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
 }
 
 export interface IUserService {

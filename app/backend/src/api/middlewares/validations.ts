@@ -10,16 +10,16 @@ export default abstract class Validate {
       return res.status(400).json({ message: 'All fields must be filled' });
     }
 
-    if (!emailRegex.test(user.email)) {
-      return res.status(401).json({ message: 'Incorrect email or password' });
-    }
-
     if (typeof user.email !== 'string' || typeof user.password !== 'string') {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    if (!emailRegex.test(user.email)) {
+      return res.status(401).json({ message: 'Incorrect email or password' });
+    }
+
     if (user.password.length < 7) {
-      return res.status(400).json({ message: 'Password must have at least 7 characters.' });
+      return res.status(400).json({ message: 'Password must have at least 6 characters.' });
     }
 
     next();

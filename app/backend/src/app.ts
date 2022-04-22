@@ -1,11 +1,19 @@
 import * as express from 'express';
-// import { Request, Response, NextFunction } from 'express';
 import Validate from './api/middlewares/validations';
-// import UserController from './api/controllers/userController';
+import UserController from './api/controllers/userController';
+import UserService from './api/services/userService';
+import { IUserController, IUserService } from './interfaces/user';
+
 class App {
   public app: express.Express;
 
+  private _userController: IUserController;
+
+  private _userService: IUserService;
+
   constructor() {
+    this._userService = new UserService();
+    this._userController = new UserController(this._userService);
     this.app = express();
     this.app.use(express.json());
     this.config();
@@ -32,7 +40,7 @@ class App {
     this.app.post(
       '/login',
       Validate.login,
-      // async (req: Request, res: Response, next: NextFunction): void => {}
+      this._userController.login,
     );
   }
 }
