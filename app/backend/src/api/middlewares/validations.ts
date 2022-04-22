@@ -1,28 +1,27 @@
-import { Request } from 'express';
-import IAPIResponse from '../../interfaces/response';
-import { IUser } from '../../interfaces/userInterface';
+import { NextFunction, Request, Response } from 'express';
+import { IUser } from '../../interfaces/user';
 
 export default abstract class Validate {
-  static async login(req: Request): Promise<IAPIResponse> {
+  static async login(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const user: IUser = req.body;
     const emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
     if (!user.email || !user.password) {
-      return { statusCode: 400, err: 'Email and password must be filled.' };
+      return res.status(400).json({ message: 'All fields must be filled' });
     }
 
     if (!emailRegex.test(user.email)) {
-      return { statusCode: 401, err: 'Email must be a valid email.' };
+      return res.status(401).json({ message: 'Incorrect email or password' });
     }
 
     if (typeof user.email !== 'string' || typeof user.password !== 'string') {
-      return { statusCode: 401, err: 'Email and password must be a string.' };
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     if (user.password.length < 7) {
-      return { statusCode: 400, err: 'Password must have at least 7 characters.' };
+      return res.status(400).json({ message: 'Password must have at least 7 characters.' });
     }
 
-    return { statusCode: 200 };
+    next();
   }
 }
