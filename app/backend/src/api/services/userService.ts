@@ -1,6 +1,6 @@
 import * as bcryptjs from 'bcryptjs';
 import User from '../../database/models/UserModel';
-import { IUser, ILoginUserData, IUserFullData } from '../../interfaces/user';
+import { IUser, ILoginUserData } from '../../interfaces/user';
 import Jwt from '../middlewares/auth';
 
 export default class UserService {
@@ -15,6 +15,7 @@ export default class UserService {
     const modelResponse = await this._userModel.findOne({ where: { email: user.email } });
 
     if (!modelResponse) return loginResponse;
+
     const validUserData = await bcryptjs.compare(user.password, modelResponse.password);
 
     if (!validUserData) return loginResponse;
@@ -26,10 +27,12 @@ export default class UserService {
     return loginResponse;
   }
 
-  public async loginValidate(token: string): Promise<IUserFullData> {
+  public async loginValidate(token: string): Promise<string> {
     const { email } = Jwt.verifyToken(token);
     const loginValidateResponse = await this._userModel.findOne({ where: { email } });
 
-    return loginValidateResponse as IUserFullData;
+    if (!loginValidateResponse) return 'Token invalid or user not found.';
+
+    return loginValidateResponse.role;
   }
 }

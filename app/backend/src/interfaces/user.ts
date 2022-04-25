@@ -24,5 +24,5 @@ export interface IUserController {
 
 export interface IUserService {
   login(user: IUser): Promise<ILoginUserData | boolean>;
-  loginValidate(token: string): Promise<IUserFullData>;
+  loginValidate(token: string): Promise<string>;
 }

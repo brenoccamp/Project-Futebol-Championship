@@ -3,7 +3,6 @@ import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 
 import { app } from '../app';
-import Example from '../database/models/ExampleModel';
 
 import { Response } from 'superagent';
 
@@ -33,7 +32,8 @@ describe('Seu teste', () => {
   // it('...', async () => {
   //   chaiHttpResponse = await chai
   //      .request(app)
-  //      ...
+  //      .post('/login')
+  //      .send({ email: 'admin@admin.com', password: 'secret_' });
 
   //   expect(...)
   // });
