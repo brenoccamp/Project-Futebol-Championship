@@ -13,4 +13,12 @@ export default class TeamService implements ITeamService {
 
     return teams;
   }
+
+  public async getTeamById(id: number): Promise<ITeam | undefined> {
+    const team = await this._teamModel.findOne({ where: { id } });
+
+    if (!team) return undefined;
+
+    return team;
+  }
 }

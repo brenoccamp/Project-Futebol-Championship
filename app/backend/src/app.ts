@@ -23,12 +23,11 @@ class App {
     this._userController = new UserController(this._userService);
     this._teamService = new TeamService();
     this._teamController = new TeamController(this._teamService);
+
     this.app = express();
     this.app.use(express.json());
-    this.config();
 
-    this.userRoutes();
-    this.teamsRoutes();
+    this.config();
   }
 
   private config(): void {
@@ -40,6 +39,9 @@ class App {
     };
 
     this.app.use(accessControl);
+
+    this.userRoutes();
+    this.teamsRoutes();
   }
 
   public start(PORT: string | number): void {
@@ -63,6 +65,11 @@ class App {
     this.app.get(
       '/teams',
       this._teamController.getAllTeams,
+    );
+
+    this.app.get(
+      '/teams/:id',
+      this._teamController.getTeamById,
     );
   }
 }

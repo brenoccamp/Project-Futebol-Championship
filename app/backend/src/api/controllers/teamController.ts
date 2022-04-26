@@ -7,7 +7,7 @@ export default class TeamController implements ITeamController {
   ) {}
 
   public getAllTeams = async (
-    req: Request,
+    _req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<Response | void> => {
@@ -17,6 +17,24 @@ export default class TeamController implements ITeamController {
       if (!teamServiceResponse.length) {
         return res.status(404).json({ message: 'Any team registered yet' });
       }
+
+      return res.status(200).json(teamServiceResponse);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public getTeamById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response | void> => {
+    try {
+      const id = Number(req.params.id);
+
+      const teamServiceResponse = await this.teamService.getTeamById(id);
+
+      if (!teamServiceResponse) return res.status(404).json({ message: 'Team not found' });
 
       return res.status(200).json(teamServiceResponse);
     } catch (err) {

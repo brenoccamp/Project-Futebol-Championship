@@ -7,8 +7,10 @@ export interface ITeam {
 
 export interface ITeamController {
   getAllTeams(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
+  getTeamById(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
 }
 
 export interface ITeamService {
   getAllTeams(): Promise<ITeam[] | []>;
+  getTeamById(id: number): Promise<ITeam | undefined>;
 }
