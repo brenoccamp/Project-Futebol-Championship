@@ -40,4 +40,54 @@ describe('TESTING LOGIN ROUTE', () => {
     expect(chaiHttpResponse.body.user).to.be.deep.equal(userFullData);
     expect(chaiHttpResponse.body.token).to.be.an('string');
   });
+
+  it('Verify if it throws an error when only email is sent', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ email: 'admin@admin.com' });
+
+    expect(chaiHttpResponse).to.have.status(400);
+    expect(chaiHttpResponse.body.message).to.be.equal('All fields must be filled');
+  });
+
+  it ('Verify if it throws an error when only password is sent', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ email: 'admin@admin.com' });
+
+    expect(chaiHttpResponse).to.have.status(400);
+    expect(chaiHttpResponse.body.message).to.be.equal('All fields must be filled');
+  });
+
+  it ('Verify if it throws an error when email has incorrect format', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ email: 'admin.com', password: 'secret_admin' });
+
+    expect(chaiHttpResponse).to.have.status(401);
+    expect(chaiHttpResponse.body.message).to.be.equal('Incorrect email or password');
+  });
+
+  it ('Verify if it throws an error when email or password isn\'t an string', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ email: 12345, password: 123456 });
+
+    expect(chaiHttpResponse).to.have.status(401);
+    expect(chaiHttpResponse.body.message).to.be.equal('Invalid email or password');
+  });
+
+  it ('Verify if it throws an error when password length does not have at least 6 characters', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ email: 'admin@admin.com', password: 'secre' });
+
+    expect(chaiHttpResponse).to.have.status(400);
+    expect(chaiHttpResponse.body.message).to.be.equal('Password must have at least 6 characters');
+  });
 });

@@ -18,8 +18,8 @@ export default abstract class Validate {
       return res.status(401).json({ message: 'Incorrect email or password' });
     }
 
-    if (user.password.length < 7) {
-      return res.status(400).json({ message: 'Password must have at least 6 characters.' });
+    if (user.password.length < 6) {
+      return res.status(400).json({ message: 'Password must have at least 6 characters' });
     }
 
     next();
