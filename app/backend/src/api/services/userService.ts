@@ -17,8 +17,8 @@ export default class UserService {
     if (!modelResponse) return loginResponse;
 
     const validUserData = await bcryptjs.compare(user.password, modelResponse.password);
-
     if (!validUserData) return loginResponse;
+
     const { id, username, role, email } = modelResponse;
     const userData = { id, username, role, email };
 
@@ -32,7 +32,7 @@ export default class UserService {
     const { email } = Jwt.verifyToken(token);
     const loginValidateResponse = await this._userModel.findOne({ where: { email } });
 
-    if (!loginValidateResponse) return 'Token invalid or user not found.';
+    if (!loginValidateResponse) return 'Invalid token or user not found.';
 
     return loginValidateResponse.role;
   }

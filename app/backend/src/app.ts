@@ -7,6 +7,7 @@ import { ITeamController, ITeamService } from './interfaces/team';
 import TeamController from './api/controllers/teamController';
 import TeamService from './api/services/teamService';
 import { IMatchController } from './interfaces/match';
+import error from './api/middlewares/error';
 
 class App {
   public app: express.Express;
@@ -45,6 +46,8 @@ class App {
 
     this.userRoutes();
     this.teamsRoutes();
+
+    this.app.use(error);
   }
 
   public start(PORT: string | number): void {

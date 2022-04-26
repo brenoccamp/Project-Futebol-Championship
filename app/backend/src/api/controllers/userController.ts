@@ -27,14 +27,15 @@ export default class UserController {
   ): Promise<Response | void> => {
     try {
       const { authorization } = req.headers;
+
       if (!authorization) return res.status(401).json({ message: 'Token not found' });
 
       const validateLoginServiceResponse = await this.userService.loginValidate(authorization);
 
-      if (validateLoginServiceResponse === 'Token invalid or user not found.') {
+      if (validateLoginServiceResponse === 'Invalid token or user not found.') {
         return res
           .status(404)
-          .json({ message: 'Token invalid or user not found.' });
+          .json({ message: 'Invalid token or user not found.' });
       }
 
       return res.status(200).json(validateLoginServiceResponse);
