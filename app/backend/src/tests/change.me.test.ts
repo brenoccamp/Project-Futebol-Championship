@@ -1,44 +1,43 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
+import * as bcryptjs from 'bcryptjs';
 import chaiHttp = require('chai-http');
-
+import UserModel from '../database/models/UserModel';
+import { Response } from 'superagent';
 import { app } from '../app';
 
-import { Response } from 'superagent';
+import { userFullData } from './_mocks_/userMocks';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('Seu teste', () => {
-  /**
-   * Exemplo do uso de stubs com tipos
-   */
+describe('TESTING LOGIN ROUTE', () => {
+  let chaiHttpResponse: Response;
 
-  // let chaiHttpResponse: Response;
+  before(async () => {
+    sinon
+      .stub(UserModel, "findOne")
+      .resolves(userFullData as UserModel);
+  });
 
-  // before(async () => {
-  //   sinon
-  //     .stub(Example, "findOne")
-  //     .resolves({
-  //       ...<Seu mock>
-  //     } as Example);
-  // });
+  after(()=>{
+    (UserModel.findOne as sinon.SinonStub).restore();
+    (bcryptjs.compare as sinon.SinonStub).restore();
+  })
 
-  // after(()=>{
-  //   (Example.findOne as sinon.SinonStub).restore();
-  // })
+  it('When login occurs successfully', async () => {
+    sinon
+      .stub(bcryptjs, 'compare')
+      .resolves(true);
 
-  // it('...', async () => {
-  //   chaiHttpResponse = await chai
-  //      .request(app)
-  //      .post('/login')
-  //      .send({ email: 'admin@admin.com', password: 'secret_' });
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/login')
+      .send({ email: 'admin@admin.com', password: 'secret_admin' });
 
-  //   expect(...)
-  // });
-
-  it('Seu sub-teste', () => {
-    expect(false).to.be.eq(true);
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body.user).to.be.deep.equal(userFullData);
+    expect(chaiHttpResponse.body.token).to.be.an('string');
   });
 });

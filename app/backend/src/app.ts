@@ -6,6 +6,7 @@ import { IUserController, IUserService } from './interfaces/user';
 import { ITeamController, ITeamService } from './interfaces/team';
 import TeamController from './api/controllers/teamController';
 import TeamService from './api/services/teamService';
+import { IMatchController } from './interfaces/match';
 
 class App {
   public app: express.Express;
@@ -17,6 +18,8 @@ class App {
   private _teamController: ITeamController;
 
   private _teamService: ITeamService;
+
+  private _matchService: IMatchController;
 
   constructor() {
     this._userService = new UserService();
@@ -70,6 +73,13 @@ class App {
     this.app.get(
       '/teams/:id',
       this._teamController.getTeamById,
+    );
+  }
+
+  private matchesRoutes(): void {
+    this.app.get(
+      '/matches',
+      /* controller de matches */
     );
   }
 }

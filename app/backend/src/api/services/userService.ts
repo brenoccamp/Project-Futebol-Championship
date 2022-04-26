@@ -21,6 +21,7 @@ export default class UserService {
     if (!validUserData) return loginResponse;
     const { id, username, role, email } = modelResponse;
     const userData = { id, username, role, email };
+
     const token = Jwt.generateToken(userData);
     loginResponse = { user: userData, token };
 
