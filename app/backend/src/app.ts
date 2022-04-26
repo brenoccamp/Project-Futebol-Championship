@@ -3,6 +3,9 @@ import Validate from './api/middlewares/validations';
 import UserController from './api/controllers/userController';
 import UserService from './api/services/userService';
 import { IUserController, IUserService } from './interfaces/user';
+import { ITeamController, ITeamService } from './interfaces/team';
+import TeamController from './api/controllers/teamController';
+import TeamService from './api/services/teamService';
 
 class App {
   public app: express.Express;
@@ -11,14 +14,21 @@ class App {
 
   private _userService: IUserService;
 
+  private _teamController: ITeamController;
+
+  private _teamService: ITeamService;
+
   constructor() {
     this._userService = new UserService();
     this._userController = new UserController(this._userService);
+    this._teamService = new TeamService();
+    this._teamController = new TeamController(this._teamService);
     this.app = express();
     this.app.use(express.json());
     this.config();
 
     this.userRoutes();
+    this.teamsRoutes();
   }
 
   private config(): void {
@@ -46,6 +56,13 @@ class App {
     this.app.get(
       '/login/validate',
       this._userController.loginValidate,
+    );
+  }
+
+  private teamsRoutes(): void {
+    this.app.get(
+      '/teams',
+      this._teamController.getAllTeams,
     );
   }
 }

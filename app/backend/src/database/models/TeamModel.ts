@@ -1,10 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '.';
-// import Match from './MatchModel';
-// import OtherModel from './OtherModel';
 
 class Team extends Model {
-  // public <campo>!: <tipo>;
   declare id: number;
 
   declare teamName: string;
@@ -21,7 +18,6 @@ Team.init({
     allowNull: false,
   },
 }, {
-  // ... Outras configs
   underscored: true,
   sequelize: db,
   modelName: 'Team',
