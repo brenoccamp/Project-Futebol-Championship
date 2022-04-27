@@ -4,11 +4,14 @@ import * as bcryptjs from 'bcryptjs';
 import chaiHttp = require('chai-http');
 import UserModel from '../database/models/UserModel';
 import TeamModel from '../database/models/TeamModel';
+import MatchModel from '../database/models/MatchModel';
 import { Response } from 'superagent';
 import { app } from '../app';
+import { IMatches } from '../interfaces/match';
 
 import { userFullData } from './_mocks_/userMocks';
 import { allTeams, team } from './_mocks_/teamMocks';
+import { allMatches, matchesInProgress, finishedMatches } from './_mocks_/matchMocks';
 
 chai.use(chaiHttp);
 
@@ -306,6 +309,64 @@ describe('TESTING GET TEAM BY ID ROUTE "/teams/:id"', () => {
       .request(app)
       .get('/teams/:id')
       .send({ id: 1 });
+
+    expect(chaiHttpResponse).to.have.status(500);
+    expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
+  });
+});
+
+describe('TESTING ROUTE "/matches"', () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+      .stub(MatchModel, 'findAll')
+      .resolves(allMatches as IMatches[]);
+  });
+
+  after(() => {
+    (MatchModel.findAll as sinon.SinonStub).restore();
+  });
+
+  it('Verify if it returns status 200 with all matches informations', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/matches');
+
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal(allMatches);
+  });
+
+  it('Verify if it returns status 200 with only matches in progress', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/matches')
+      .query({ inProgress: 'true' });
+
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal(matchesInProgress);
+  });
+
+  it('Verify if it returns status 200 with only finished matches', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/matches')
+      .query({ inProgress: 'false' });
+
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal(finishedMatches);
+  });
+
+  it('Verify if it returns status 500 when occurs an internal error', async () => {
+    (MatchModel.findAll as sinon.SinonStub).restore();
+
+    sinon
+      .stub(MatchModel, 'findAll')
+      .throws('errorObj');
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/matches');
 
     expect(chaiHttpResponse).to.have.status(500);
     expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
