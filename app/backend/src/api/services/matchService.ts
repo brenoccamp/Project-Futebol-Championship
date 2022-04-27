@@ -1,12 +1,15 @@
-import { IMatches, IMatchService } from '../../interfaces/match';
+import { IMatch, IMatches, IMatchService, INewMatch } from '../../interfaces/match';
 import Match from '../../database/models/MatchModel';
 import Team from '../../database/models/TeamModel';
 
 export default class MatchService implements IMatchService {
   private _matchModel;
 
+  private _teamModel;
+
   constructor() {
     this._matchModel = Match;
+    this._teamModel = Team;
   }
 
   public async getAllMatches(): Promise<IMatches[]> {
@@ -18,5 +21,23 @@ export default class MatchService implements IMatchService {
     });
 
     return matches as IMatches[];
+  }
+
+  public async createMatchInProgress(newMatch: INewMatch): Promise<IMatch | undefined> {
+    const homeTeam = await this._teamModel.findOne({ where: { id: newMatch.homeTeam } });
+    const awayTeam = await this._teamModel.findOne({ where: { id: newMatch.awayTeam } });
+
+    if (!homeTeam) return undefined;
+    if (!awayTeam) return undefined;
+
+    const createdMatch = await this._matchModel.create({
+      homeTeam: newMatch.homeTeam,
+      homeTeamGoals: newMatch.homeTeamGoals,
+      awayTeam: newMatch.awayTeam,
+      awayTeamGoals: newMatch.awayTeamGoals,
+      inProgress: true,
+    });
+
+    return createdMatch;
   }
 }

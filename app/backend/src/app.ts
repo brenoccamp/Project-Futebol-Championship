@@ -91,6 +91,11 @@ class App {
       '/matches',
       this._matchController.getAllMatches,
     );
+
+    this.app.post(
+      '/matches',
+      this._matchController.createMatchInProgress,
+    );
   }
 }
 
