@@ -255,3 +255,59 @@ describe('TESTING TEAM ROUTE "/teams"', () => {
     expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
   });
 });
+
+describe('TESTING GET TEAM BY ID ROUTE "/teams/:id"', () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+      .stub(TeamModel, 'findOne')
+      .resolves(team as TeamModel);
+  });
+
+  after(() => {
+    (TeamModel.findOne as sinon.SinonStub).restore();
+  });
+
+  it('When found team, it returns status 200', async () => {
+    chaiHttpResponse = await chai
+    .request(app)
+    .get('/teams/:id')
+    .send({ id: 1 });
+
+  expect(chaiHttpResponse).to.have.status(200);
+  expect(chaiHttpResponse.body).to.be.deep.equal(team);
+  });
+
+  it('When team is not found, it returns status 404', async () => {
+    (TeamModel.findOne as sinon.SinonStub).restore();
+
+    sinon
+    .stub(TeamModel, 'findOne')
+    .resolves(null);
+
+    chaiHttpResponse = await chai
+    .request(app)
+    .get('/teams/:id')
+    .send({ id: 999 });
+
+  expect(chaiHttpResponse).to.have.status(404);
+  expect(chaiHttpResponse.body.message).to.be.equal('Team not found');
+  });
+
+  it('Verify if it returns status 500 when occurs an internal error', async () => {
+    (TeamModel.findOne as sinon.SinonStub).restore();
+
+    sinon
+      .stub(TeamModel, 'findOne')
+      .throws('errorObj');
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/teams/:id')
+      .send({ id: 1 });
+
+    expect(chaiHttpResponse).to.have.status(500);
+    expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
+  });
+});
