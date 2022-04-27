@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import MatchModel from '../database/models/MatchModel';
 
 export interface IMatch {
+  id: number;
   homeTeam: string;
   homeTeamGoals: string;
   awayTeam: string;
@@ -19,5 +20,5 @@ export interface IMatchController {
 }
 
 export interface IMatchService {
-  getAllMatches(): Promise<IMatch[] | []>;
+  getAllMatches(): Promise<IMatches[] | []>;
 }

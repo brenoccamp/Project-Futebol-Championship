@@ -6,8 +6,10 @@ import { IUserController, IUserService } from './interfaces/user';
 import { ITeamController, ITeamService } from './interfaces/team';
 import TeamController from './api/controllers/teamController';
 import TeamService from './api/services/teamService';
-import { IMatchController } from './interfaces/match';
+import { IMatchController, IMatchService } from './interfaces/match';
 import error from './api/middlewares/error';
+import MatchService from './api/services/matchService';
+import MatchController from './api/controllers/matchController';
 
 class App {
   public app: express.Express;
@@ -20,13 +22,17 @@ class App {
 
   private _teamService: ITeamService;
 
-  private _matchService: IMatchController;
+  private _matchController: IMatchController;
+
+  private _matchService: IMatchService;
 
   constructor() {
     this._userService = new UserService();
     this._userController = new UserController(this._userService);
     this._teamService = new TeamService();
     this._teamController = new TeamController(this._teamService);
+    this._matchService = new MatchService();
+    this._matchController = new MatchController(this._matchService);
 
     this.app = express();
     this.app.use(express.json());
@@ -46,6 +52,7 @@ class App {
 
     this.userRoutes();
     this.teamsRoutes();
+    this.matchesRoutes();
 
     this.app.use(error);
   }
@@ -82,7 +89,7 @@ class App {
   private matchesRoutes(): void {
     this.app.get(
       '/matches',
-      /* controller de matches */
+      this._matchController.getAllMatches,
     );
   }
 }

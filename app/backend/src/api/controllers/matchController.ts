@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { IMatchService } from '../../interfaces/match';
+import { IMatchController, IMatchService } from '../../interfaces/match';
 
-export default class MatchController {
+export default class MatchController implements IMatchController {
   constructor(
     private _matchService: IMatchService,
   ) { }
