@@ -9,7 +9,7 @@ export default class MatchService implements IMatchService {
     this._matchModel = Match;
   }
 
-  public async getAllMatches(): Promise<IMatches[] | []> {
+  public async getAllMatches(): Promise<IMatches[]> {
     const matches = await this._matchModel.findAll({
       include: [
         { model: Team, as: 'teamHome', attributes: ['teamName'] },

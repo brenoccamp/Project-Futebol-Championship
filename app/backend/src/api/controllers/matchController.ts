@@ -12,10 +12,14 @@ export default class MatchController implements IMatchController {
     next: NextFunction,
   ): Promise<Response | void> => {
     try {
-      const matchServiceResponse = await this._matchService.getAllMatches();
+      const { inProgress } = req.query;
 
-      if (!matchServiceResponse.length) {
-        return res.status(400).json({ message: 'Any match registered yet' });
+      let matchServiceResponse = await this._matchService.getAllMatches();
+
+      if (inProgress && matchServiceResponse.length) {
+        const conditionToFilter = inProgress === 'true';
+        matchServiceResponse = matchServiceResponse
+          .filter((match) => match.inProgress === conditionToFilter);
       }
 
       return res.status(200).json(matchServiceResponse);

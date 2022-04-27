@@ -9,7 +9,7 @@ class Match extends Model {
 
   declare homeTeamGoals: number;
 
-  declare awayTeam: string;
+  declare awayTeam: number;
 
   declare awayTeamGoals: number;
 

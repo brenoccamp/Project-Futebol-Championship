@@ -20,5 +20,5 @@ export interface IMatchController {
 }
 
 export interface IMatchService {
-  getAllMatches(): Promise<IMatches[] | []>;
+  getAllMatches(): Promise<IMatches[]>;
 }
