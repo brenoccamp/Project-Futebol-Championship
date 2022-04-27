@@ -1,15 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 import MatchModel from '../database/models/MatchModel';
 
-export interface INewMatch {
+export interface IMatch {
+  id: number;
+}
+
+export interface INewMatch extends IMatch {
   homeTeam: number;
   homeTeamGoals: number;
   awayTeam: number;
   awayTeamGoals: number;
 }
 
-export interface IMatch extends INewMatch {
-  id: number;
+export interface IMatchWithInProgress extends INewMatch {
+  inProgress: boolean;
 }
 
 export interface IMatches extends MatchModel {

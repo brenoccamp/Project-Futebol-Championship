@@ -7,11 +7,11 @@ import TeamModel from '../database/models/TeamModel';
 import MatchModel from '../database/models/MatchModel';
 import { Response } from 'superagent';
 import { app } from '../app';
-import { IMatches } from '../interfaces/match';
+import { IMatches, IMatchWithInProgress } from '../interfaces/match';
 
 import { userFullData } from './_mocks_/userMocks';
 import { allTeams, team } from './_mocks_/teamMocks';
-import { allMatches, matchesInProgress, finishedMatches } from './_mocks_/matchMocks';
+import { allMatches, matchesInProgress, finishedMatches, match } from './_mocks_/matchMocks';
 
 chai.use(chaiHttp);
 
@@ -315,7 +315,7 @@ describe('TESTING GET TEAM BY ID ROUTE "/teams/:id"', () => {
   });
 });
 
-describe('TESTING ROUTE "/matches"', () => {
+describe('TESTING ROUTE GET "/matches"', () => {
   let chaiHttpResponse: Response;
 
   before(async () => {
@@ -367,6 +367,77 @@ describe('TESTING ROUTE "/matches"', () => {
     chaiHttpResponse = await chai
       .request(app)
       .get('/matches');
+
+    expect(chaiHttpResponse).to.have.status(500);
+    expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
+  });
+});
+
+describe('TESTING ROUTE POST "/matches"', () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+      .stub(MatchModel, 'create')
+      .resolves(match as MatchModel);
+
+    sinon
+      .stub(TeamModel, 'findOne')
+      .resolves(team as TeamModel);
+  });
+
+  after(() => {
+    (MatchModel.create as sinon.SinonStub).restore();
+    (TeamModel.findOne as sinon.SinonStub).restore();
+  });
+
+  it('Verify if return status 201 and successfully created new match', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/matches')
+      .send({
+        homeTeam: 1,
+        homeTeamGoals: 3,
+        awayTeam: 8,
+        awayTeamGoals: 2,
+    });
+
+    expect(chaiHttpResponse).to.have.status(201);
+    expect(chaiHttpResponse.body).to.be.deep.equal(match);
+  });
+
+  it('Verify if it returns status 401 when home team and away team have same id', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/matches')
+      .send({
+        homeTeam: 1,
+        homeTeamGoals: 3,
+        awayTeam: 1,
+        awayTeamGoals: 2,
+    });
+
+    expect(chaiHttpResponse).to.have.status(401);
+    expect(chaiHttpResponse.body.message)
+      .to.be.equal('It is not possible to create a match with two equal teams');
+  });
+
+  it('Verify if it returns status 500 when occurs an internal error', async () => {
+    (MatchModel.create as sinon.SinonStub).restore();
+
+    sinon
+      .stub(MatchModel, 'create')
+      .throws('errorObj');
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .post('/matches')
+      .send({
+        homeTeam: 3,
+        homeTeamGoals: 3,
+        awayTeam: 8,
+        awayTeamGoals: 2,
+    });
 
     expect(chaiHttpResponse).to.have.status(500);
     expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');

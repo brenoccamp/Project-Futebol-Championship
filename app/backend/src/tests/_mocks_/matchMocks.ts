@@ -1350,3 +1350,12 @@ export const finishedMatches = [
     }
   }
 ]
+
+export const match = {
+  id: 49,
+  homeTeam: 1,
+  homeTeamGoals: 3,
+  awayTeam: 8,
+  awayTeamGoals: 2,
+  inProgress: true,
+}
