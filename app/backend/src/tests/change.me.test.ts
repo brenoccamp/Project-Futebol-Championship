@@ -3,10 +3,12 @@ import * as chai from 'chai';
 import * as bcryptjs from 'bcryptjs';
 import chaiHttp = require('chai-http');
 import UserModel from '../database/models/UserModel';
+import TeamModel from '../database/models/TeamModel';
 import { Response } from 'superagent';
 import { app } from '../app';
 
 import { userFullData } from './_mocks_/userMocks';
+import { allTeams, team } from './_mocks_/teamMocks';
 
 chai.use(chaiHttp);
 
@@ -150,7 +152,7 @@ describe('TESTING LOGIN VALIDATE ROUTE "/login/validate"', () => {
       .resolves(userFullData as UserModel);
   });
 
-  after(() => {
+  after(async () => {
     (UserModel.findOne as sinon.SinonStub).restore();
   });
 
@@ -198,5 +200,58 @@ describe('TESTING LOGIN VALIDATE ROUTE "/login/validate"', () => {
 
     expect(chaiHttpResponse).to.have.status(404);
     expect(chaiHttpResponse.body.message).to.be.equal('Invalid token or user not found.');
+  });
+});
+
+describe('TESTING TEAM ROUTE "/teams"', () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+      .stub(TeamModel, 'findAll')
+      .resolves(allTeams as TeamModel[]);
+  });
+
+  after(() => {
+    (TeamModel.findAll as sinon.SinonStub).restore();
+  });
+
+  it('When get all teams, returns status 200', async () => {
+    chaiHttpResponse = await chai
+    .request(app)
+    .get('/teams');
+
+  expect(chaiHttpResponse).to.have.status(200);
+  expect(chaiHttpResponse.body).to.be.deep.equal(allTeams);
+  });
+
+  it('When any team is registered, returns status 404', async () => {
+    (TeamModel.findAll as sinon.SinonStub).restore();
+
+    sinon
+    .stub(TeamModel, 'findAll')
+    .resolves([] as TeamModel[]);
+
+    chaiHttpResponse = await chai
+    .request(app)
+    .get('/teams');
+
+  expect(chaiHttpResponse).to.have.status(404);
+  expect(chaiHttpResponse.body.message).to.be.equal('Any team registered yet');
+  });
+
+  it('Verify if it returns status 500 when occurs an internal error', async () => {
+    (TeamModel.findAll as sinon.SinonStub).restore();
+
+    sinon
+      .stub(TeamModel, 'findAll')
+      .throws('errorObj');
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/teams');
+
+    expect(chaiHttpResponse).to.have.status(500);
+    expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
   });
 });
