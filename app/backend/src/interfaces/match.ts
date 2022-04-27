@@ -20,9 +20,11 @@ export interface IMatches extends MatchModel {
 export interface IMatchController {
   getAllMatches(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
   createMatchInProgress(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
+  finishMatch(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
 }
 
 export interface IMatchService {
   getAllMatches(): Promise<IMatches[]>;
   createMatchInProgress(newMatch: INewMatch): Promise<IMatch | undefined>;
+  finishMatch(id: string): Promise<boolean>;
 }

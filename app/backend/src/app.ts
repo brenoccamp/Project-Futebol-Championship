@@ -96,6 +96,11 @@ class App {
       '/matches',
       this._matchController.createMatchInProgress,
     );
+
+    this.app.patch(
+      '/matches/:id/finish',
+      this._matchController.finishMatch,
+    );
   }
 }
 

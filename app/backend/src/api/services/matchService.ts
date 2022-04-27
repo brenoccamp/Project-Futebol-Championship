@@ -40,4 +40,14 @@ export default class MatchService implements IMatchService {
 
     return createdMatch;
   }
+
+  public async finishMatch(id: string): Promise<boolean> {
+    const foundMatch = await this._matchModel.findOne({ where: { id } });
+
+    if (!foundMatch) return false;
+
+    await this._matchModel.update({ inProgress: false }, { where: { id } });
+
+    return true;
+  }
 }

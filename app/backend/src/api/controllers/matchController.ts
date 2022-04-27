@@ -36,7 +36,6 @@ export default class MatchController implements IMatchController {
     try {
       const newMatch: INewMatch = req.body;
 
-      console.log('awayTeamId: ', newMatch.awayTeam, 'homeTeamId: ', newMatch.homeTeam);
       if (newMatch.awayTeam === newMatch.homeTeam) {
         return res.status(401)
           .json({ message: 'It is not possible to create a match with two equal teams' });
@@ -47,6 +46,24 @@ export default class MatchController implements IMatchController {
       if (!createdMatch) return res.status(404).json({ message: 'There is no team with such id!' });
 
       return res.status(201).json(createdMatch);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public finishMatch = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response | void> => {
+    try {
+      const { id } = req.params;
+
+      const finishedMatch = await this._matchService.finishMatch(id);
+
+      if (!finishedMatch) return res.status(404).json({ message: 'Match not found' });
+
+      return res.status(200).json({ message: 'Match updated successfully' });
     } catch (err) {
       next(err);
     }
