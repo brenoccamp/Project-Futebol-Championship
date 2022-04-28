@@ -206,7 +206,7 @@ describe('TESTING LOGIN VALIDATE ROUTE "/login/validate"', () => {
   });
 });
 
-describe('TESTING TEAM ROUTE "/teams"', () => {
+describe('TESTING ROUTE GET "/teams"', () => {
   let chaiHttpResponse: Response;
 
   before(async () => {
@@ -259,7 +259,7 @@ describe('TESTING TEAM ROUTE "/teams"', () => {
   });
 });
 
-describe('TESTING GET TEAM BY ID ROUTE "/teams/:id"', () => {
+describe('TESTING ROUTE GET "/teams/:id"', () => {
   let chaiHttpResponse: Response;
 
   before(async () => {
@@ -498,7 +498,7 @@ describe('TESTING ROUTE POST "/matches/:id/finish"', () => {
   
     sinon
       .stub(MatchModel, 'findOne')
-      .resolves(false as any);
+      .resolves(null);
 
     chaiHttpResponse = await chai
       .request(app)
@@ -520,6 +520,70 @@ describe('TESTING ROUTE POST "/matches/:id/finish"', () => {
       .request(app)
       .patch('/matches/:id/finish')
       .send({ id: '48' });
+
+    expect(chaiHttpResponse).to.have.status(500);
+    expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
+  });
+});
+
+describe('TESTING ROUTE PATCH "/matches/:id"', () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+      .stub(MatchModel, 'update')
+      .resolves();
+
+    sinon
+      .stub(MatchModel, 'findOne')
+      .resolves(match as MatchModel);
+  });
+
+  after(() => {
+    (MatchModel.update as sinon.SinonStub).restore();
+    (MatchModel.findOne as sinon.SinonStub).restore();
+  });
+
+  it('Verify if it returns status 200 when match result updated successfully', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .patch('/matches/:id')
+      .send({ homeTeamGoals: 2, awayTeamGoals: 3 })
+      .set({ id: 1 });
+
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body.message).to.be.equal('Match updated successfully');
+  });
+
+  it('Verify if it returns status 404 when match not found', async () => {
+    (MatchModel.findOne as sinon.SinonStub).restore();
+
+    sinon
+      .stub(MatchModel, 'findOne')
+      .resolves(null);
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .patch('/matches/:id')
+      .send({ homeTeamGoals: 2, awayTeamGoals: 3 })
+      .set({ id: 1 });
+
+    expect(chaiHttpResponse).to.have.status(404);
+    expect(chaiHttpResponse.body.message).to.be.equal('Match not found');
+  });
+
+  it('Verify if it returns status 500 when occurs an internal error', async () => {
+    (MatchModel.findOne as sinon.SinonStub).restore();
+
+    sinon
+      .stub(MatchModel, 'findOne')
+      .throws('errorObj');
+
+      chaiHttpResponse = await chai
+      .request(app)
+      .patch('/matches/:id')
+      .send({ homeTeamGoals: 2, awayTeamGoals: 3 })
+      .set({ id: 1 });
 
     expect(chaiHttpResponse).to.have.status(500);
     expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
