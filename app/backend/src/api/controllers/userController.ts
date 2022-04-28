@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
-import { IUser, IUserService } from '../../interfaces/user';
+import { IUser, IUserController, IUserService } from '../../interfaces/user';
 
-export default class UserController {
+export default class UserController implements IUserController {
   constructor(
     private userService: IUserService,
   ) { }

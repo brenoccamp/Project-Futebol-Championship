@@ -1,9 +1,9 @@
 import * as bcryptjs from 'bcryptjs';
 import User from '../../database/models/UserModel';
-import { IUser, ILoginUserData } from '../../interfaces/user';
+import { IUser, ILoginUserData, IUserService } from '../../interfaces/user';
 import Jwt from '../middlewares/auth';
 
-export default class UserService {
+export default class UserService implements IUserService {
   private _userModel;
 
   constructor() {

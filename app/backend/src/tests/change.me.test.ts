@@ -7,7 +7,7 @@ import TeamModel from '../database/models/TeamModel';
 import MatchModel from '../database/models/MatchModel';
 import { Response } from 'superagent';
 import { app } from '../app';
-import { IMatches, IMatchWithInProgress } from '../interfaces/match';
+import { IMatches } from '../interfaces/match';
 
 import { userFullData } from './_mocks_/userMocks';
 import { allTeams, team } from './_mocks_/teamMocks';
