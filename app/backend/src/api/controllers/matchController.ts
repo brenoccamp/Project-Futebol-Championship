@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { IMatchController, IMatchService, INewMatch } from '../../interfaces/match';
+import { IMatchController, IMatchResult, IMatchService, INewMatch } from '../../interfaces/match';
 
 export default class MatchController implements IMatchController {
   constructor(
@@ -51,7 +51,7 @@ export default class MatchController implements IMatchController {
     }
   };
 
-  public finishMatch = async (
+  public setMatchFinish = async (
     req: Request,
     res: Response,
     next: NextFunction,
@@ -59,9 +59,28 @@ export default class MatchController implements IMatchController {
     try {
       const { id } = req.params;
 
-      const finishedMatch = await this._matchService.finishMatch(id);
+      const finishedMatch = await this._matchService.setMatchFinish(id);
 
       if (!finishedMatch) return res.status(404).json({ message: 'Match not found' });
+
+      return res.status(200).json({ message: 'Match updated successfully' });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public setMatchResult = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response | void> => {
+    try {
+      const { id } = req.params;
+      const matchResult: IMatchResult = req.body;
+
+      const matchResultChanged = await this._matchService.setMatchResult(id, matchResult);
+
+      if (!matchResultChanged) return res.status(404).json({ message: 'Match not found' });
 
       return res.status(200).json({ message: 'Match updated successfully' });
     } catch (err) {

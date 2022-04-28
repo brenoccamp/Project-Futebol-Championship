@@ -21,14 +21,21 @@ export interface IMatches extends MatchModel {
   teamAway: { teamName: string };
 }
 
+export interface IMatchResult {
+  homeTeamGoals: number;
+  awayTeamGoals: number;
+}
+
 export interface IMatchController {
   getAllMatches(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
   createMatchInProgress(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
-  finishMatch(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
+  setMatchFinish(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
+  setMatchResult(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
 }
 
 export interface IMatchService {
   getAllMatches(): Promise<IMatches[]>;
   createMatchInProgress(newMatch: INewMatch): Promise<IMatch | undefined>;
-  finishMatch(id: string): Promise<boolean>;
+  setMatchFinish(id: string): Promise<boolean>;
+  setMatchResult(id: string, result: IMatchResult): Promise<boolean>;
 }

@@ -98,8 +98,13 @@ class App {
     );
 
     this.app.patch(
+      '/matches/:id',
+      this._matchController.setMatchResult,
+    );
+
+    this.app.patch(
       '/matches/:id/finish',
-      this._matchController.finishMatch,
+      this._matchController.setMatchFinish,
     );
   }
 }

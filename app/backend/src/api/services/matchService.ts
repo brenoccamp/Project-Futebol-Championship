@@ -1,4 +1,4 @@
-import { IMatch, IMatches, IMatchService, INewMatch } from '../../interfaces/match';
+import { IMatch, IMatches, IMatchResult, IMatchService, INewMatch } from '../../interfaces/match';
 import Match from '../../database/models/MatchModel';
 import Team from '../../database/models/TeamModel';
 
@@ -41,12 +41,25 @@ export default class MatchService implements IMatchService {
     return createdMatch;
   }
 
-  public async finishMatch(id: string): Promise<boolean> {
+  public async setMatchFinish(id: string): Promise<boolean> {
     const foundMatch = await this._matchModel.findOne({ where: { id } });
 
     if (!foundMatch) return false;
 
     await this._matchModel.update({ inProgress: false }, { where: { id } });
+
+    return true;
+  }
+
+  public async setMatchResult(id: string, result: IMatchResult): Promise<boolean> {
+    const foundMatch = await this._matchModel.findOne({ where: { id } });
+
+    if (!foundMatch) return false;
+
+    await this._matchModel.update({
+      homeTeamGoals: result.homeTeamGoals,
+      awayTeamGoals: result.awayTeamGoals,
+    }, { where: { id } });
 
     return true;
   }
