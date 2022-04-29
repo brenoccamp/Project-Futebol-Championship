@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { IMatches } from './match';
 import { ITeam } from './team';
 
-export interface ITeamDataObj {
+export interface ITeamScoresData {
   name: string;
   totalPoints: number;
   totalGames: number;
@@ -25,12 +25,19 @@ export interface IMatchData {
 
 export interface ITeamMatchesData {
   name: string;
-  homeMatches: IMatchData,
-  awayMatches: IMatchData,
+  homeMatches: IMatchData;
+  awayMatches: IMatchData;
+  homeScores?: ITeamScoresData;
+  awayScores?: ITeamScoresData;
 }
 
-export interface ILeaderboardObj {
-  [key: string]: ITeamMatchesData
+export interface ITeamPerformance {
+  [key: string]: ITeamMatchesData;
+}
+
+export interface IHomeAndAwayLeaderboard {
+  leaderboardHome: ITeamScoresData[];
+  leaderboardAway: ITeamScoresData[];
 }
 
 export interface ILeaderboardController {
@@ -38,5 +45,5 @@ export interface ILeaderboardController {
 }
 
 export interface ILeaderboardService {
-  leaderboardHome(teams: ITeam[], matches: IMatches[]): Promise<ILeaderboardObj>;
+  leaderboardHome(teams: ITeam[], matches: IMatches[]): Promise<any>;
 }

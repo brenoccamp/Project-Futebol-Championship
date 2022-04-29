@@ -1,28 +1,16 @@
 import { IMatches } from '../../interfaces/match';
 import {
   ILeaderboardService,
-  ILeaderboardObj,
-  // ITeamMatchesData,
+  ITeamPerformance,
+  IHomeAndAwayLeaderboard,
+  ITeamMatchesData,
 } from '../../interfaces/leaderboard';
 import { ITeam } from '../../interfaces/team';
 
 export default class LeaderboardService implements ILeaderboardService {
-  private createLeaderboardObj = (teams: ITeam[]): ILeaderboardObj => {
-    const leaderboardObj = teams
-      .reduce((acc: ILeaderboardObj, { teamName }) => {
-        // acc[teamName] = {
-        //   name: teamName,
-        //   totalPoints: 0,
-        //   totalGames: 0,
-        //   totalVictories: 0,
-        //   totalDraws: 0,
-        //   totalLosses: 0,
-        //   goalsFavor: 0,
-        //   goalsOwn: 0,
-        //   goalsBalance: 0,
-        //   efficiency: 0,
-        // };
-
+  private createLeaderboardObj = (teams: ITeam[]): ITeamPerformance => {
+    const teamPerformance = teams
+      .reduce((acc: ITeamPerformance, { teamName }) => {
         acc[teamName] = {
           name: teamName,
           homeMatches: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
@@ -32,111 +20,132 @@ export default class LeaderboardService implements ILeaderboardService {
         return acc;
       }, {});
 
-    return leaderboardObj;
+    return teamPerformance;
   };
 
-  private calcWinsDrawsAndLosses = (board: ILeaderboardObj, games: IMatches[]): ILeaderboardObj => {
-    const leaderboardUpdated = board;
+  private calcHomeAndAwayResults = (board:ITeamPerformance, games:IMatches[]):ITeamPerformance => {
+    const teamPerformance = board;
 
     games.forEach((match) => {
-      leaderboardUpdated[match.teamHome.teamName].homeMatches.goalsFavor += match.homeTeamGoals;
-      leaderboardUpdated[match.teamHome.teamName].homeMatches.goalsOwn += match.awayTeamGoals;
+      teamPerformance[match.teamHome.teamName].homeMatches.goalsFavor += match.homeTeamGoals;
+      teamPerformance[match.teamHome.teamName].homeMatches.goalsOwn += match.awayTeamGoals;
 
-      leaderboardUpdated[match.teamAway.teamName].awayMatches.goalsFavor += match.awayTeamGoals;
-      leaderboardUpdated[match.teamAway.teamName].awayMatches.goalsOwn += match.homeTeamGoals;
+      teamPerformance[match.teamAway.teamName].awayMatches.goalsFavor += match.awayTeamGoals;
+      teamPerformance[match.teamAway.teamName].awayMatches.goalsOwn += match.homeTeamGoals;
 
       if (match.homeTeamGoals > match.awayTeamGoals) {
-        leaderboardUpdated[match.teamHome.teamName].homeMatches.victories += 1;
-        leaderboardUpdated[match.teamAway.teamName].awayMatches.losses += 1; return;
+        teamPerformance[match.teamHome.teamName].homeMatches.victories += 1;
+        teamPerformance[match.teamAway.teamName].awayMatches.losses += 1; return;
       }
 
       if (match.awayTeamGoals > match.homeTeamGoals) {
-        leaderboardUpdated[match.teamAway.teamName].awayMatches.victories += 1;
-        leaderboardUpdated[match.teamHome.teamName].homeMatches.losses += 1; return;
+        teamPerformance[match.teamAway.teamName].awayMatches.victories += 1;
+        teamPerformance[match.teamHome.teamName].homeMatches.losses += 1; return;
       }
 
-      leaderboardUpdated[match.teamHome.teamName].homeMatches.draws += 1;
-      leaderboardUpdated[match.teamAway.teamName].awayMatches.draws += 1;
+      teamPerformance[match.teamHome.teamName].homeMatches.draws += 1;
+      teamPerformance[match.teamAway.teamName].awayMatches.draws += 1;
     });
 
-    return leaderboardUpdated;
+    return teamPerformance;
   };
 
-  // private calcGamesAndDraws = (
-  //   leaderboard: ILeaderboardObj,
-  //   matches: IMatches[],
-  // ): ILeaderboardObj => {
-  //   const leaderboardUpdated = leaderboard;
+  private calcHomeTeamScores = (teamsDataObj: ITeamPerformance): ITeamPerformance => {
+    const teamPerformance = teamsDataObj;
 
-  //   matches.forEach((match) => {
-  //     const { teamHome: { teamName: homeTeamName } } = match;
-  //     const { teamAway: { teamName: awayTeamName } } = match;
+    Object.values(teamsDataObj).forEach(({ name, homeMatches }) => {
+      const totalPoints = ((homeMatches.victories * 3) + homeMatches.draws);
+      const totalGames = homeMatches.victories + homeMatches.losses + homeMatches.draws;
 
-  //     if (match.homeTeamGoals === match.awayTeamGoals) {
-  //       leaderboardUpdated[homeTeamName].totalDraws += 1;
-  //       leaderboardUpdated[awayTeamName].totalDraws += 1;
-  //     }
+      teamPerformance[name].homeScores = {
+        name,
+        totalPoints,
+        totalGames,
+        totalVictories: homeMatches.victories,
+        totalDraws: homeMatches.draws,
+        totalLosses: homeMatches.losses,
+        goalsFavor: homeMatches.goalsFavor,
+        goalsOwn: homeMatches.goalsOwn,
+        goalsBalance: (homeMatches.goalsFavor - homeMatches.goalsOwn),
+        efficiency: Number(((totalPoints / (totalGames * 3)) * 100).toFixed(2)) };
+    });
 
-  //     leaderboardUpdated[homeTeamName].totalGames += 1;
-  //     leaderboardUpdated[awayTeamName].totalGames += 1;
+    return teamPerformance;
+  };
+
+  private calcAwayTeamScores = (teamsDataObj: ITeamPerformance): ITeamPerformance => {
+    const teamPerformance = teamsDataObj;
+
+    Object.values(teamsDataObj).forEach(({ name, awayMatches }) => {
+      const totalPoints = ((awayMatches.victories * 3) + awayMatches.draws);
+      const totalGames = awayMatches.victories + awayMatches.losses + awayMatches.draws;
+
+      teamPerformance[name].awayScores = {
+        name,
+        totalPoints,
+        totalGames,
+        totalVictories: awayMatches.victories,
+        totalDraws: awayMatches.draws,
+        totalLosses: awayMatches.losses,
+        goalsFavor: awayMatches.goalsFavor,
+        goalsOwn: awayMatches.goalsOwn,
+        goalsBalance: (awayMatches.goalsFavor - awayMatches.goalsOwn),
+        efficiency: Number(((totalPoints / (totalGames * 3)) * 100).toFixed(2)) };
+    });
+
+    return teamPerformance;
+  };
+
+  // private testeFunction = (teamsDataObj: ITeamPerformance): ITeamPerformance => {
+  //   const teamPerformance = teamsDataObj;
+
+  //   Object.values(teamsDataObj).forEach(({ name, awayMatches }) => {
+  //     const totalPoints = ((awayMatches.victories * 3) + awayMatches.draws);
+  //     const totalGames = awayMatches.victories + awayMatches.losses + awayMatches.draws;
+
+  //     teamPerformance[name].awayScores = {
+  //       name,
+  //       totalPoints,
+  //       totalGames,
+  //       totalVictories: awayMatches.victories,
+  //       totalDraws: awayMatches.draws,
+  //       totalLosses: awayMatches.losses,
+  //       goalsFavor: awayMatches.goalsFavor,
+  //       goalsOwn: awayMatches.goalsOwn,
+  //       goalsBalance: (awayMatches.goalsFavor - awayMatches.goalsOwn),
+  //       efficiency: Number(((totalPoints / (totalGames * 3)) * 100).toFixed(2)) };
   //   });
 
-  //   return leaderboardUpdated;
+  //   return teamPerformance;
   // };
 
-  // private calcGoalsFavorAndGoalsOwn = (
-  //   leaderboard: ILeaderboardObj,
-  //   matches: IMatches[],
-  // ): ILeaderboardObj => {
-  //   const leaderboardUpdated = leaderboard;
+  private generateLeaderboards = (teamPerformance: ITeamPerformance): IHomeAndAwayLeaderboard => {
+    const homeAndAwayLeaderboards = Object.values(teamPerformance)
+      .reduce((acc: IHomeAndAwayLeaderboard, curr: ITeamMatchesData) => {
+        if (curr.homeScores && curr.awayScores) {
+          acc.leaderboardHome.push(curr.homeScores);
+          acc.leaderboardAway.push(curr.awayScores);
+        }
 
-  //   matches.forEach((match) => {
-  //     const { teamHome: { teamName: homeTeamName } } = match;
-  //     const { teamAway: { teamName: awayTeamName } } = match;
+        return acc;
+      }, { leaderboardHome: [], leaderboardAway: [] } as IHomeAndAwayLeaderboard);
 
-  //     const { homeTeamGoals } = match;
-  //     const { awayTeamGoals } = match;
+    return homeAndAwayLeaderboards;
+  };
 
-  //     leaderboardUpdated[homeTeamName].goalsFavor += homeTeamGoals;
-  //     leaderboardUpdated[homeTeamName].goalsOwn += awayTeamGoals;
+  public async leaderboardHome(teams: ITeam[], matches: IMatches[]): Promise<any> {
+    let teamPerformance;
 
-  //     leaderboardUpdated[awayTeamName].goalsFavor += awayTeamGoals;
-  //     leaderboardUpdated[awayTeamName].goalsOwn += homeTeamGoals;
-  //   });
+    teamPerformance = this.createLeaderboardObj(teams);
 
-  //   return leaderboardUpdated;
-  // };
+    teamPerformance = this.calcHomeAndAwayResults(teamPerformance, matches);
 
-  // private calcGoalsBalanceAndEfficiency = (
-  //   leaderboard: ILeaderboardObj,
-  // ): ILeaderboardObj => {
-  //   const leaderboardUpdated = leaderboard;
+    teamPerformance = this.calcHomeTeamScores(teamPerformance);
 
-  //   Object.values(leaderboard)
-  //     .forEach(({ goalsFavor, goalsOwn, totalPoints, totalGames, name }) => {
-  //       const balanceGoals = goalsFavor - goalsOwn;
-  //       const teamEfficiency = ((totalPoints / (totalGames * 3)) * 100).toFixed(2);
+    teamPerformance = this.calcAwayTeamScores(teamPerformance);
 
-  //       leaderboardUpdated[name].goalsBalance = balanceGoals;
-  //       leaderboardUpdated[name].efficiency = Number(teamEfficiency);
-  //     });
+    teamPerformance = this.generateLeaderboards(teamPerformance);
 
-  //   return leaderboardUpdated;
-  // };
-
-  public async leaderboardHome(teams: ITeam[], matches: IMatches[]): Promise<ILeaderboardObj> {
-    let leaderboardObj;
-
-    leaderboardObj = this.createLeaderboardObj(teams);
-
-    leaderboardObj = this.calcWinsDrawsAndLosses(leaderboardObj, matches);
-
-    // leaderboardObj = this.calcGamesAndDraws(leaderboardObj, matches);
-
-    // leaderboardObj = this.calcGoalsFavorAndGoalsOwn(leaderboardObj, matches);
-
-    // leaderboardObj = this.calcGoalsBalanceAndEfficiency(leaderboardObj);
-
-    return leaderboardObj;
+    return teamPerformance;
   }
 }

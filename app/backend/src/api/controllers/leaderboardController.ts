@@ -21,9 +21,9 @@ export default class LeaderboardController implements ILeaderboardController {
 
       const leaderboardObj = await this._leaderboardService.leaderboardHome(allTeams, allMatches);
 
-      const leaderboardArray = Object.values(leaderboardObj);
+      // const leaderboardArray = Object.values(leaderboardObj);
 
-      return res.status(200).json(leaderboardArray);
+      return res.status(200).json(leaderboardObj);
     } catch (err) {
       next(err);
     }
