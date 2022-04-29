@@ -30,7 +30,7 @@ export interface ITeamMatchesData {
 }
 
 export interface ILeaderboardObj {
-  [key: string]: ITeamDataObj
+  [key: string]: ITeamMatchesData
 }
 
 export interface ILeaderboardController {

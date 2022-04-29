@@ -14,24 +14,24 @@ export default class LeaderboardService implements ILeaderboardService {
   private createLeaderboardObj = (teams: ITeam[]): ILeaderboardObj => {
     const leaderboardObj = teams
       .reduce((acc: ILeaderboardObj, { teamName }) => {
-        acc[teamName] = {
-          name: teamName,
-          totalPoints: 0,
-          totalGames: 0,
-          totalVictories: 0,
-          totalDraws: 0,
-          totalLosses: 0,
-          goalsFavor: 0,
-          goalsOwn: 0,
-          goalsBalance: 0,
-          efficiency: 0,
-        };
-
         // acc[teamName] = {
         //   name: teamName,
-        //   homeMatch: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
-        //   awayMatch: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
+        //   totalPoints: 0,
+        //   totalGames: 0,
+        //   totalVictories: 0,
+        //   totalDraws: 0,
+        //   totalLosses: 0,
+        //   goalsFavor: 0,
+        //   goalsOwn: 0,
+        //   goalsBalance: 0,
+        //   efficiency: 0,
         // };
+
+        acc[teamName] = {
+          name: teamName,
+          homeMatch: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
+          awayMatch: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
+        };
 
         return acc;
       }, {});
