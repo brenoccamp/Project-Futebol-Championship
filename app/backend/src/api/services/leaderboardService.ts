@@ -35,22 +35,26 @@ export default class LeaderboardService implements ILeaderboardService {
     return leaderboardObj;
   };
 
-  private calcWinsLossesAndDraws = (board: ILeaderboardObj, games: IMatches[]): ILeaderboardObj => {
+  private calcWinsDrawsAndLosses = (board: ILeaderboardObj, games: IMatches[]): ILeaderboardObj => {
     const leaderboardUpdated = board;
 
     games.forEach((match) => {
+      leaderboardUpdated[match.teamHome.teamName].homeMatches.goalsFavor += match.homeTeamGoals;
+      leaderboardUpdated[match.teamHome.teamName].homeMatches.goalsOwn += match.awayTeamGoals;
+
+      leaderboardUpdated[match.teamAway.teamName].awayMatches.goalsFavor += match.awayTeamGoals;
+      leaderboardUpdated[match.teamAway.teamName].awayMatches.goalsOwn += match.homeTeamGoals;
+
       if (match.homeTeamGoals > match.awayTeamGoals) {
         leaderboardUpdated[match.teamHome.teamName].homeMatches.victories += 1;
-        leaderboardUpdated[match.teamHome.teamName].homeMatches.goalsFavor += match.homeTeamGoals;
-        leaderboardUpdated[match.teamAway.teamName].homeMatches.goalsOwn += match.awayTeamGoals;
         return;
       }
+
       if (match.awayTeamGoals > match.homeTeamGoals) {
         leaderboardUpdated[match.teamAway.teamName].awayMatches.victories += 1;
-        leaderboardUpdated[match.teamAway.teamName].awayMatches.goalsFavor += match.awayTeamGoals;
-        leaderboardUpdated[match.teamHome.teamName].awayMatches.goalsOwn += match.homeTeamGoals;
         return;
       }
+
       leaderboardUpdated[match.teamHome.teamName].homeMatches.draws += 1;
       leaderboardUpdated[match.teamAway.teamName].awayMatches.draws += 1;
     });
@@ -58,80 +62,80 @@ export default class LeaderboardService implements ILeaderboardService {
     return leaderboardUpdated;
   };
 
-  private calcGamesAndDraws = (
-    leaderboard: ILeaderboardObj,
-    matches: IMatches[],
-  ): ILeaderboardObj => {
-    const leaderboardUpdated = leaderboard;
+  // private calcGamesAndDraws = (
+  //   leaderboard: ILeaderboardObj,
+  //   matches: IMatches[],
+  // ): ILeaderboardObj => {
+  //   const leaderboardUpdated = leaderboard;
 
-    matches.forEach((match) => {
-      const { teamHome: { teamName: homeTeamName } } = match;
-      const { teamAway: { teamName: awayTeamName } } = match;
+  //   matches.forEach((match) => {
+  //     const { teamHome: { teamName: homeTeamName } } = match;
+  //     const { teamAway: { teamName: awayTeamName } } = match;
 
-      if (match.homeTeamGoals === match.awayTeamGoals) {
-        leaderboardUpdated[homeTeamName].totalDraws += 1;
-        leaderboardUpdated[awayTeamName].totalDraws += 1;
-      }
+  //     if (match.homeTeamGoals === match.awayTeamGoals) {
+  //       leaderboardUpdated[homeTeamName].totalDraws += 1;
+  //       leaderboardUpdated[awayTeamName].totalDraws += 1;
+  //     }
 
-      leaderboardUpdated[homeTeamName].totalGames += 1;
-      leaderboardUpdated[awayTeamName].totalGames += 1;
-    });
+  //     leaderboardUpdated[homeTeamName].totalGames += 1;
+  //     leaderboardUpdated[awayTeamName].totalGames += 1;
+  //   });
 
-    return leaderboardUpdated;
-  };
+  //   return leaderboardUpdated;
+  // };
 
-  private calcGoalsFavorAndGoalsOwn = (
-    leaderboard: ILeaderboardObj,
-    matches: IMatches[],
-  ): ILeaderboardObj => {
-    const leaderboardUpdated = leaderboard;
+  // private calcGoalsFavorAndGoalsOwn = (
+  //   leaderboard: ILeaderboardObj,
+  //   matches: IMatches[],
+  // ): ILeaderboardObj => {
+  //   const leaderboardUpdated = leaderboard;
 
-    matches.forEach((match) => {
-      const { teamHome: { teamName: homeTeamName } } = match;
-      const { teamAway: { teamName: awayTeamName } } = match;
+  //   matches.forEach((match) => {
+  //     const { teamHome: { teamName: homeTeamName } } = match;
+  //     const { teamAway: { teamName: awayTeamName } } = match;
 
-      const { homeTeamGoals } = match;
-      const { awayTeamGoals } = match;
+  //     const { homeTeamGoals } = match;
+  //     const { awayTeamGoals } = match;
 
-      leaderboardUpdated[homeTeamName].goalsFavor += homeTeamGoals;
-      leaderboardUpdated[homeTeamName].goalsOwn += awayTeamGoals;
+  //     leaderboardUpdated[homeTeamName].goalsFavor += homeTeamGoals;
+  //     leaderboardUpdated[homeTeamName].goalsOwn += awayTeamGoals;
 
-      leaderboardUpdated[awayTeamName].goalsFavor += awayTeamGoals;
-      leaderboardUpdated[awayTeamName].goalsOwn += homeTeamGoals;
-    });
+  //     leaderboardUpdated[awayTeamName].goalsFavor += awayTeamGoals;
+  //     leaderboardUpdated[awayTeamName].goalsOwn += homeTeamGoals;
+  //   });
 
-    return leaderboardUpdated;
-  };
+  //   return leaderboardUpdated;
+  // };
 
-  private calcGoalsBalanceAndEfficiency = (
-    leaderboard: ILeaderboardObj,
-  ): ILeaderboardObj => {
-    const leaderboardUpdated = leaderboard;
+  // private calcGoalsBalanceAndEfficiency = (
+  //   leaderboard: ILeaderboardObj,
+  // ): ILeaderboardObj => {
+  //   const leaderboardUpdated = leaderboard;
 
-    Object.values(leaderboard)
-      .forEach(({ goalsFavor, goalsOwn, totalPoints, totalGames, name }) => {
-        const balanceGoals = goalsFavor - goalsOwn;
-        const teamEfficiency = ((totalPoints / (totalGames * 3)) * 100).toFixed(2);
+  //   Object.values(leaderboard)
+  //     .forEach(({ goalsFavor, goalsOwn, totalPoints, totalGames, name }) => {
+  //       const balanceGoals = goalsFavor - goalsOwn;
+  //       const teamEfficiency = ((totalPoints / (totalGames * 3)) * 100).toFixed(2);
 
-        leaderboardUpdated[name].goalsBalance = balanceGoals;
-        leaderboardUpdated[name].efficiency = Number(teamEfficiency);
-      });
+  //       leaderboardUpdated[name].goalsBalance = balanceGoals;
+  //       leaderboardUpdated[name].efficiency = Number(teamEfficiency);
+  //     });
 
-    return leaderboardUpdated;
-  };
+  //   return leaderboardUpdated;
+  // };
 
   public async leaderboardHome(teams: ITeam[], matches: IMatches[]): Promise<ILeaderboardObj> {
     let leaderboardObj;
 
     leaderboardObj = this.createLeaderboardObj(teams);
 
-    leaderboardObj = this.calcWinsLossesAndDraws(leaderboardObj, matches);
+    leaderboardObj = this.calcWinsDrawsAndLosses(leaderboardObj, matches);
 
-    leaderboardObj = this.calcGamesAndDraws(leaderboardObj, matches);
+    // leaderboardObj = this.calcGamesAndDraws(leaderboardObj, matches);
 
-    leaderboardObj = this.calcGoalsFavorAndGoalsOwn(leaderboardObj, matches);
+    // leaderboardObj = this.calcGoalsFavorAndGoalsOwn(leaderboardObj, matches);
 
-    leaderboardObj = this.calcGoalsBalanceAndEfficiency(leaderboardObj);
+    // leaderboardObj = this.calcGoalsBalanceAndEfficiency(leaderboardObj);
 
     return leaderboardObj;
   }
