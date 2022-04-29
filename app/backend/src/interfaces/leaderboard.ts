@@ -25,8 +25,8 @@ export interface IMatchData {
 
 export interface ITeamMatchesData {
   name: string;
-  homeMatch: IMatchData,
-  awayMatch: IMatchData,
+  homeMatches: IMatchData,
+  awayMatches: IMatchData,
 }
 
 export interface ILeaderboardObj {

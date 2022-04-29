@@ -7,10 +7,6 @@ import {
 import { ITeam } from '../../interfaces/team';
 
 export default class LeaderboardService implements ILeaderboardService {
-  constructor() {
-    this.createLeaderboardObj = this.createLeaderboardObj.bind(this);
-  }
-
   private createLeaderboardObj = (teams: ITeam[]): ILeaderboardObj => {
     const leaderboardObj = teams
       .reduce((acc: ILeaderboardObj, { teamName }) => {
@@ -29,8 +25,8 @@ export default class LeaderboardService implements ILeaderboardService {
 
         acc[teamName] = {
           name: teamName,
-          homeMatch: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
-          awayMatch: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
+          homeMatches: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
+          awayMatches: { victories: 0, losses: 0, draws: 0, goalsFavor: 0, goalsOwn: 0 },
         };
 
         return acc;
@@ -39,24 +35,24 @@ export default class LeaderboardService implements ILeaderboardService {
     return leaderboardObj;
   };
 
-  private calcPointsWinAndLosses = (board: ILeaderboardObj, games: IMatches[]): ILeaderboardObj => {
+  private calcWinsLossesAndDraws = (board: ILeaderboardObj, games: IMatches[]): ILeaderboardObj => {
     const leaderboardUpdated = board;
 
     games.forEach((match) => {
       if (match.homeTeamGoals > match.awayTeamGoals) {
-        leaderboardUpdated[match.teamHome.teamName].totalPoints += 3;
-        leaderboardUpdated[match.teamHome.teamName].totalVictories += 1;
-        leaderboardUpdated[match.teamAway.teamName].totalLosses += 1;
+        leaderboardUpdated[match.teamHome.teamName].homeMatches.victories += 1;
+        leaderboardUpdated[match.teamHome.teamName].homeMatches.goalsFavor += match.homeTeamGoals;
+        leaderboardUpdated[match.teamAway.teamName].homeMatches.goalsOwn += match.awayTeamGoals;
         return;
       }
       if (match.awayTeamGoals > match.homeTeamGoals) {
-        leaderboardUpdated[match.teamAway.teamName].totalPoints += 3;
-        leaderboardUpdated[match.teamAway.teamName].totalVictories += 1;
-        leaderboardUpdated[match.teamHome.teamName].totalLosses += 1;
+        leaderboardUpdated[match.teamAway.teamName].awayMatches.victories += 1;
+        leaderboardUpdated[match.teamAway.teamName].awayMatches.goalsFavor += match.awayTeamGoals;
+        leaderboardUpdated[match.teamHome.teamName].awayMatches.goalsOwn += match.homeTeamGoals;
         return;
       }
-      leaderboardUpdated[match.teamHome.teamName].totalPoints += 1;
-      leaderboardUpdated[match.teamAway.teamName].totalPoints += 1;
+      leaderboardUpdated[match.teamHome.teamName].homeMatches.draws += 1;
+      leaderboardUpdated[match.teamAway.teamName].awayMatches.draws += 1;
     });
 
     return leaderboardUpdated;
@@ -129,7 +125,7 @@ export default class LeaderboardService implements ILeaderboardService {
 
     leaderboardObj = this.createLeaderboardObj(teams);
 
-    leaderboardObj = this.calcPointsWinAndLosses(leaderboardObj, matches);
+    leaderboardObj = this.calcWinsLossesAndDraws(leaderboardObj, matches);
 
     leaderboardObj = this.calcGamesAndDraws(leaderboardObj, matches);
 
