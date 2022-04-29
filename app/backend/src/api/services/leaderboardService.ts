@@ -47,12 +47,12 @@ export default class LeaderboardService implements ILeaderboardService {
 
       if (match.homeTeamGoals > match.awayTeamGoals) {
         leaderboardUpdated[match.teamHome.teamName].homeMatches.victories += 1;
-        return;
+        leaderboardUpdated[match.teamAway.teamName].awayMatches.losses += 1; return;
       }
 
       if (match.awayTeamGoals > match.homeTeamGoals) {
         leaderboardUpdated[match.teamAway.teamName].awayMatches.victories += 1;
-        return;
+        leaderboardUpdated[match.teamHome.teamName].homeMatches.losses += 1; return;
       }
 
       leaderboardUpdated[match.teamHome.teamName].homeMatches.draws += 1;
