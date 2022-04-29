@@ -33,7 +33,7 @@ afterEach(async () => {
   await termBrowser(browser);
 });
 
-describe(getRequirement(23), () => {
+describe.skip(getRequirement(23), () => {
   it('Será validado que é possível salvar um jogo no banco de dados e ver o jogo na página de jogos', async () => {
     const dadosInsert = {
       homeTeam: teams[3].teamName,
@@ -62,7 +62,7 @@ describe(getRequirement(23), () => {
   });
 });
 
-describe(getRequirement(24), () => {
+describe.skip(getRequirement(24), () => {
   it('Será validado que ao finalizar uma partida é alterado no banco de dados e na página', async () => {
 
     const dadosInsert = {
@@ -95,7 +95,7 @@ describe(getRequirement(24), () => {
   });
 });
 
-describe(getRequirement(25), () => {
+describe.skip(getRequirement(25), () => {
   it('Será validado que não é possivel inserir uma partida com times iguais', async () => {
     const dadosInsert = {
       homeTeam: teams[3].teamName,
@@ -110,7 +110,7 @@ describe(getRequirement(25), () => {
   });
 });
 
-describe(getRequirement(26), () => {
+describe.skip(getRequirement(26), () => {
   it('Será validado na API que não é possível inserir uma partida com time que não existe na tabela teams', async () => {
     const dadosInsert = {
       homeTeam: 12345,

@@ -15,6 +15,20 @@ export interface ITeamDataObj {
   efficiency: number;
 }
 
+export interface IMatchData {
+  victories: number;
+  losses: number;
+  draws: number;
+  goalsFavor: number;
+  goalsOwn: number;
+}
+
+export interface ITeamMatchesData {
+  name: string;
+  homeMatch: IMatchData,
+  awayMatch: IMatchData,
+}
+
 export interface ILeaderboardObj {
   [key: string]: ITeamDataObj
 }

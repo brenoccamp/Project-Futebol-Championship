@@ -31,7 +31,7 @@ afterEach(async () => {
   await termBrowser(browser);
 });
 
-describe(getRequirement(16), () => {
+describe.skip(getRequirement(16), () => {
   it('O avaliador verificará se tentar fazer a requisição correta na sua API, os dados corretos são retornados', async () => {
     const expectedResult = [
       {
@@ -114,7 +114,7 @@ describe(getRequirement(16), () => {
   });
 });
 
-describe(getRequirement(17), () => {
+describe.skip(getRequirement(17), () => {
   it('O avaliador verificará se tentar fazer a requisição correta na sua API, os dados corretos são retornados', async () => {
     const expectedResult = {
       "id": 5,
@@ -135,7 +135,7 @@ describe(getRequirement(17), () => {
   });
 });
 
-describe(getRequirement(19), () => {
+describe.skip(getRequirement(19), () => {
   it('Será validado que a página apresentará todos os dados de partidas sem nenhum filtro', async () => {
     await page.waitForTimeout(puppeteerDefs.pause.brief);
 
@@ -148,7 +148,7 @@ describe(getRequirement(19), () => {
   });
 });
 
-describe(getRequirement(20), () => {
+describe.skip(getRequirement(20), () => {
   it('Será validado que ao escolher a opção de partidas em andamento será filtrado todas as partidas em andamento', async () => {
     await page.waitForTimeout(puppeteerDefs.pause.brief);
 
@@ -161,7 +161,7 @@ describe(getRequirement(20), () => {
   });
 });
 
-describe(getRequirement(21), () => {
+describe.skip(getRequirement(21), () => {
   it('Será validado que ao escolher a opção de partidas finalizadas será filtrado todas as partidas finalizadas', async () => {
     await page.waitForTimeout(puppeteerDefs.pause.brief);
 

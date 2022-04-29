@@ -16,7 +16,7 @@ beforeAll(async () => {
   });
 });
 
-describe(getRequirement(4), () => {
+describe.skip(getRequirement(4), () => {
   test('No back-end', () => {
     expect(backEnd.skipped).toStrictEqual(0);
     expect(backEnd.pct).toBeGreaterThanOrEqual(5);
@@ -24,7 +24,7 @@ describe(getRequirement(4), () => {
   });
 });
 
-describe(getRequirement(6), () => {
+describe.skip(getRequirement(6), () => {
   test('No back-end', () => {
     expect(backEnd.skipped).toStrictEqual(0);
     expect(backEnd.pct).toBeGreaterThanOrEqual(10);
@@ -32,7 +32,7 @@ describe(getRequirement(6), () => {
   });
 });
 
-describe(getRequirement(8), () => {
+describe.skip(getRequirement(8), () => {
   test('No back-end', () => {
     expect(backEnd.skipped).toStrictEqual(0);
     expect(backEnd.pct).toBeGreaterThanOrEqual(15);
@@ -40,7 +40,7 @@ describe(getRequirement(8), () => {
   });
 });
 
-describe(getRequirement(10), () => {
+describe.skip(getRequirement(10), () => {
   test('No back-end', () => {
     expect(backEnd.skipped).toStrictEqual(0);
     expect(backEnd.pct).toBeGreaterThanOrEqual(20);
@@ -48,7 +48,7 @@ describe(getRequirement(10), () => {
   });
 });
 
-describe(getRequirement(12), () => {
+describe.skip(getRequirement(12), () => {
   test('No back-end', () => {
     expect(backEnd.skipped).toStrictEqual(0);
     expect(backEnd.pct).toBeGreaterThanOrEqual(30);
@@ -56,7 +56,7 @@ describe(getRequirement(12), () => {
   });
 });
 
-describe(getRequirement(15), () => {
+describe.skip(getRequirement(15), () => {
   test('No back-end', () => {
     expect(backEnd.skipped).toStrictEqual(0);
     expect(backEnd.pct).toBeGreaterThanOrEqual(45);
@@ -64,7 +64,7 @@ describe(getRequirement(15), () => {
   });
 });
 
-describe(getRequirement(18), () => {
+describe.skip(getRequirement(18), () => {
   test('No back-end', () => {
     expect(backEnd.skipped).toStrictEqual(0);
     expect(backEnd.pct).toBeGreaterThanOrEqual(60);
@@ -72,7 +72,7 @@ describe(getRequirement(18), () => {
   });
 });
 
-describe(getRequirement(22), () => {
+describe.skip(getRequirement(22), () => {
   test('No back-end', () => {
     expect(backEnd.skipped).toStrictEqual(0);
     expect(backEnd.pct).toBeGreaterThanOrEqual(80);
