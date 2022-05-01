@@ -38,4 +38,5 @@ export interface IMatchService {
   createMatchInProgress(newMatch: INewMatch): Promise<IMatch | undefined>;
   setMatchFinish(id: string): Promise<boolean>;
   setMatchResult(id: string, result: IMatchResult): Promise<boolean>;
+  getMatchesByProgress(inProgress: boolean): Promise<IMatches[]>;
 }

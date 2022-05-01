@@ -28,4 +28,16 @@ export default class LeaderboardController implements ILeaderboardController {
       next(err);
     }
   };
+
+  // public leaderboardAway = async (
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction,
+  // ): Promise<Response | void> => {
+  //   try {
+
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
 }

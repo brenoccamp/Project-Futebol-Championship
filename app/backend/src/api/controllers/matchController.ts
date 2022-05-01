@@ -14,13 +14,14 @@ export default class MatchController implements IMatchController {
     try {
       const { inProgress } = req.query;
 
-      let matchServiceResponse = await this._matchService.getAllMatches();
+      if (inProgress) {
+        const isInProgress = inProgress === 'true';
+        const isMatchesInProgress = await this._matchService.getMatchesByProgress(isInProgress);
 
-      if (inProgress && matchServiceResponse.length) {
-        const conditionToFilter = inProgress === 'true';
-        matchServiceResponse = matchServiceResponse
-          .filter((match) => match.inProgress === conditionToFilter);
+        return res.status(200).json(isMatchesInProgress);
       }
+
+      const matchServiceResponse = await this._matchService.getAllMatches();
 
       return res.status(200).json(matchServiceResponse);
     } catch (err) {

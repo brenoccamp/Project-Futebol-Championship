@@ -23,6 +23,18 @@ export default class MatchService implements IMatchService {
     return matches as IMatches[];
   }
 
+  public async getMatchesByProgress(inProgress: boolean): Promise <IMatches[]> {
+    const matches = await this._matchModel.findAll({
+      where: { inProgress },
+      include: [
+        { model: Team, as: 'teamHome', attributes: ['teamName'] },
+        { model: Team, as: 'teamAway', attributes: ['teamName'] },
+      ],
+    });
+
+    return matches as IMatches[];
+  }
+
   public async createMatchInProgress(newMatch: INewMatch): Promise<IMatch | undefined> {
     const homeTeam = await this._teamModel.findOne({ where: { id: newMatch.homeTeam } });
     const awayTeam = await this._teamModel.findOne({ where: { id: newMatch.awayTeam } });
