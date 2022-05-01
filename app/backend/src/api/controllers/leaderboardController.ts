@@ -17,8 +17,7 @@ export default class LeaderboardController implements ILeaderboardController {
   ): Promise<Response | void> => {
     try {
       const allTeams = await this._teamService.getAllTeams();
-      const allMatches = await this._matchService.getAllMatches()
-        .then((matches) => matches.filter((match) => match.inProgress === false));
+      const allMatches = await this._matchService.getMatchesByProgress(false);
 
       const leaderboardObj = this._leaderboardService
         .createHomeAndawayLeaderboards(allTeams, allMatches);
