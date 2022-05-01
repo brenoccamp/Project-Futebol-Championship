@@ -56,7 +56,7 @@ export interface IParamObj {
 
 export interface ILeaderboardController {
   leaderboardHome(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
-  // leaderboardAway(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
+  leaderboardAway(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
 }
 
 export interface ILeaderboardService {

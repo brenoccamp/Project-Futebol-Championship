@@ -28,15 +28,21 @@ export default class LeaderboardController implements ILeaderboardController {
     }
   };
 
-  // public leaderboardAway = async (
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction,
-  // ): Promise<Response | void> => {
-  //   try {
+  public leaderboardAway = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response | void> => {
+    try {
+      const allTeams = await this._teamService.getAllTeams();
+      const allMatches = await this._matchService.getMatchesByProgress(false);
 
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // };
+      const leaderboardObj = this._leaderboardService
+        .createHomeAndawayLeaderboards(allTeams, allMatches);
+
+      return res.status(200).json(leaderboardObj.leaderboardAway);
+    } catch (err) {
+      next(err);
+    }
+  };
 }

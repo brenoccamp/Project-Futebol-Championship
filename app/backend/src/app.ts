@@ -128,10 +128,10 @@ class App {
       this._leaderboardController.leaderboardHome,
     );
 
-    // this.app.get(
-    //   '/leaderboard/away',
-    //   this._leaderboardController.leaderboardAway,
-    // );
+    this.app.get(
+      '/leaderboard/away',
+      this._leaderboardController.leaderboardAway,
+    );
   }
 }
 
