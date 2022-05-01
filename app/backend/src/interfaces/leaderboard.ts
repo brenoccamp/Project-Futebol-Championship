@@ -40,10 +40,24 @@ export interface IHomeAndAwayLeaderboard {
   leaderboardAway: ITeamScoresData[];
 }
 
+export type MatchTypes = 'homeMatches' | 'awayMatches';
+export type ScoreTypes = 'homeScores' | 'awayScores';
+
+export interface IParamObj {
+  teamPerformance: ITeamPerformance;
+  matchType: MatchTypes;
+  scoreType: ScoreTypes;
+}
+
+// export interface ISortParams {
+//   teamPerformance: IHomeAndAwayLeaderboard;
+//   leaderboardToSort: string;
+// }
+
 export interface ILeaderboardController {
   leaderboardHome(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
 }
 
 export interface ILeaderboardService {
-  leaderboardHome(teams: ITeam[], matches: IMatches[]): Promise<any>;
+  createHomeAndawayLeaderboards(teams: ITeam[], matches: IMatches[]): IHomeAndAwayLeaderboard;
 }

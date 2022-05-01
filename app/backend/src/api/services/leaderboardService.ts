@@ -4,11 +4,13 @@ import {
   ITeamPerformance,
   IHomeAndAwayLeaderboard,
   ITeamMatchesData,
+  IParamObj,
+  ITeamScoresData,
 } from '../../interfaces/leaderboard';
 import { ITeam } from '../../interfaces/team';
 
 export default class LeaderboardService implements ILeaderboardService {
-  private createLeaderboardObj = (teams: ITeam[]): ITeamPerformance => {
+  private generateTeamPerformanceObj = (teams: ITeam[]): ITeamPerformance => {
     const teamPerformance = teams
       .reduce((acc: ITeamPerformance, { teamName }) => {
         acc[teamName] = {
@@ -50,76 +52,31 @@ export default class LeaderboardService implements ILeaderboardService {
     return teamPerformance;
   };
 
-  private calcHomeTeamScores = (teamsDataObj: ITeamPerformance): ITeamPerformance => {
-    const teamPerformance = teamsDataObj;
+  private calcScores = (paramObj: IParamObj): ITeamPerformance => {
+    const { teamPerformance, matchType, scoreType } = paramObj;
 
-    Object.values(teamsDataObj).forEach(({ name, homeMatches }) => {
-      const totalPoints = ((homeMatches.victories * 3) + homeMatches.draws);
-      const totalGames = homeMatches.victories + homeMatches.losses + homeMatches.draws;
+    Object.values(teamPerformance).forEach((teamData) => {
+      const totalPoints = ((teamData[matchType].victories * 3) + teamData[matchType].draws);
+      const totalGames = teamData[matchType].victories + teamData[matchType].losses
+        + teamData[matchType].draws;
 
-      teamPerformance[name].homeScores = {
-        name,
+      teamPerformance[teamData.name][scoreType] = {
+        name: teamData.name,
         totalPoints,
         totalGames,
-        totalVictories: homeMatches.victories,
-        totalDraws: homeMatches.draws,
-        totalLosses: homeMatches.losses,
-        goalsFavor: homeMatches.goalsFavor,
-        goalsOwn: homeMatches.goalsOwn,
-        goalsBalance: (homeMatches.goalsFavor - homeMatches.goalsOwn),
+        totalVictories: teamData[matchType].victories,
+        totalDraws: teamData[matchType].draws,
+        totalLosses: teamData[matchType].losses,
+        goalsFavor: teamData[matchType].goalsFavor,
+        goalsOwn: teamData[matchType].goalsOwn,
+        goalsBalance: (teamData[matchType].goalsFavor - teamData[matchType].goalsOwn),
         efficiency: Number(((totalPoints / (totalGames * 3)) * 100).toFixed(2)) };
     });
 
     return teamPerformance;
   };
 
-  private calcAwayTeamScores = (teamsDataObj: ITeamPerformance): ITeamPerformance => {
-    const teamPerformance = teamsDataObj;
-
-    Object.values(teamsDataObj).forEach(({ name, awayMatches }) => {
-      const totalPoints = ((awayMatches.victories * 3) + awayMatches.draws);
-      const totalGames = awayMatches.victories + awayMatches.losses + awayMatches.draws;
-
-      teamPerformance[name].awayScores = {
-        name,
-        totalPoints,
-        totalGames,
-        totalVictories: awayMatches.victories,
-        totalDraws: awayMatches.draws,
-        totalLosses: awayMatches.losses,
-        goalsFavor: awayMatches.goalsFavor,
-        goalsOwn: awayMatches.goalsOwn,
-        goalsBalance: (awayMatches.goalsFavor - awayMatches.goalsOwn),
-        efficiency: Number(((totalPoints / (totalGames * 3)) * 100).toFixed(2)) };
-    });
-
-    return teamPerformance;
-  };
-
-  // private testeFunction = (teamsDataObj: ITeamPerformance): ITeamPerformance => {
-  //   const teamPerformance = teamsDataObj;
-
-  //   Object.values(teamsDataObj).forEach(({ name, awayMatches }) => {
-  //     const totalPoints = ((awayMatches.victories * 3) + awayMatches.draws);
-  //     const totalGames = awayMatches.victories + awayMatches.losses + awayMatches.draws;
-
-  //     teamPerformance[name].awayScores = {
-  //       name,
-  //       totalPoints,
-  //       totalGames,
-  //       totalVictories: awayMatches.victories,
-  //       totalDraws: awayMatches.draws,
-  //       totalLosses: awayMatches.losses,
-  //       goalsFavor: awayMatches.goalsFavor,
-  //       goalsOwn: awayMatches.goalsOwn,
-  //       goalsBalance: (awayMatches.goalsFavor - awayMatches.goalsOwn),
-  //       efficiency: Number(((totalPoints / (totalGames * 3)) * 100).toFixed(2)) };
-  //   });
-
-  //   return teamPerformance;
-  // };
-
-  private generateLeaderboards = (teamPerformance: ITeamPerformance): IHomeAndAwayLeaderboard => {
+  private leaderboardsGenerate = (teamPerformance: ITeamPerformance): IHomeAndAwayLeaderboard => {
     const homeAndAwayLeaderboards = Object.values(teamPerformance)
       .reduce((acc: IHomeAndAwayLeaderboard, curr: ITeamMatchesData) => {
         if (curr.homeScores && curr.awayScores) {
@@ -133,18 +90,43 @@ export default class LeaderboardService implements ILeaderboardService {
     return homeAndAwayLeaderboards;
   };
 
-  public async leaderboardHome(teams: ITeam[], matches: IMatches[]): Promise<any> {
+  private leaderboardsSort = (leaderboardsObj:IHomeAndAwayLeaderboard):IHomeAndAwayLeaderboard => {
+    Object.values(leaderboardsObj).forEach((leaderboardInfos) => {
+      leaderboardInfos
+        .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.goalsOwn > b.goalsOwn ? -1 : 1))
+        .sort((a:ITeamScoresData, b: ITeamScoresData) => (a.goalsFavor > b.goalsFavor ? -1 : 1))
+        .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.goalsBalance > b.goalsBalance ? -1 : 1))
+        .sort(
+          (a:ITeamScoresData, b:ITeamScoresData) => (a.totalVictories > b.totalVictories ? -1 : 1),
+        )
+        .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.totalPoints > b.totalPoints ? -1 : 1));
+    });
+
+    return leaderboardsObj;
+  };
+
+  public createHomeAndawayLeaderboards(teams:ITeam[], matches:IMatches[]): IHomeAndAwayLeaderboard {
     let teamPerformance;
 
-    teamPerformance = this.createLeaderboardObj(teams);
+    teamPerformance = this.generateTeamPerformanceObj(teams);
 
     teamPerformance = this.calcHomeAndAwayResults(teamPerformance, matches);
 
-    teamPerformance = this.calcHomeTeamScores(teamPerformance);
+    const calcHomeScores: IParamObj = {
+      teamPerformance, matchType: 'homeMatches', scoreType: 'homeScores',
+    };
 
-    teamPerformance = this.calcAwayTeamScores(teamPerformance);
+    const calcAwayScores: IParamObj = {
+      teamPerformance, matchType: 'awayMatches', scoreType: 'awayScores',
+    };
 
-    teamPerformance = this.generateLeaderboards(teamPerformance);
+    teamPerformance = this.calcScores(calcHomeScores);
+    teamPerformance = this.calcScores(calcAwayScores);
+
+    teamPerformance = this.leaderboardsGenerate(teamPerformance);
+
+    teamPerformance = this.leaderboardsSort(teamPerformance);
+    teamPerformance = this.leaderboardsSort(teamPerformance);
 
     return teamPerformance;
   }
