@@ -90,19 +90,17 @@ export default class LeaderboardService implements ILeaderboardService {
     return homeAndAwayLeaderboards;
   };
 
-  private leaderboardsSort = (leaderboardsObj:IHomeAndAwayLeaderboard):IHomeAndAwayLeaderboard => {
-    Object.values(leaderboardsObj).forEach((leaderboardInfos) => {
-      leaderboardInfos
-        .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.goalsOwn > b.goalsOwn ? -1 : 1))
-        .sort((a:ITeamScoresData, b: ITeamScoresData) => (a.goalsFavor > b.goalsFavor ? -1 : 1))
-        .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.goalsBalance > b.goalsBalance ? -1 : 1))
-        .sort(
-          (a:ITeamScoresData, b:ITeamScoresData) => (a.totalVictories > b.totalVictories ? -1 : 1),
-        )
-        .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.totalPoints > b.totalPoints ? -1 : 1));
-    });
+  private leaderboardsSort = (leaderboardArray: ITeamScoresData[]): ITeamScoresData[] => {
+    leaderboardArray
+      .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.goalsOwn > b.goalsOwn ? -1 : 1))
+      .sort((a:ITeamScoresData, b: ITeamScoresData) => (a.goalsFavor > b.goalsFavor ? -1 : 1))
+      .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.goalsBalance > b.goalsBalance ? -1 : 1))
+      .sort(
+        (a:ITeamScoresData, b:ITeamScoresData) => (a.totalVictories > b.totalVictories ? -1 : 1),
+      )
+      .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.totalPoints > b.totalPoints ? -1 : 1));
 
-    return leaderboardsObj;
+    return leaderboardArray;
   };
 
   public createHomeAndawayLeaderboards(teams:ITeam[], matches:IMatches[]): IHomeAndAwayLeaderboard {
@@ -125,8 +123,8 @@ export default class LeaderboardService implements ILeaderboardService {
 
     teamPerformance = this.leaderboardsGenerate(teamPerformance);
 
-    teamPerformance = this.leaderboardsSort(teamPerformance);
-    teamPerformance = this.leaderboardsSort(teamPerformance);
+    teamPerformance.leaderboardHome = this.leaderboardsSort(teamPerformance.leaderboardHome);
+    teamPerformance.leaderboardAway = this.leaderboardsSort(teamPerformance.leaderboardAway);
 
     return teamPerformance;
   }
