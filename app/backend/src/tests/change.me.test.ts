@@ -647,4 +647,49 @@ describe('TESTING ROUTE GET "/leaderboard", "leaderboard/home" and "leaderboard/
     expect(chaiHttpResponse).to.have.status(200);
     expect(chaiHttpResponse.body).to.be.deep.equal(awayLeaderboard);
   });
+
+  it('Verify route "leaderboard" returns status 500 when occurs an internal error', async () => {
+    (TeamModel.findAll as sinon.SinonStub).restore();
+
+    sinon
+      .stub(TeamModel, 'findAll')
+      .throws('errorObj');
+
+      chaiHttpResponse = await chai
+      .request(app)
+      .get('/leaderboard');
+
+    expect(chaiHttpResponse).to.have.status(500);
+    expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
+  });
+
+  it('Verify route "leaderboard/home" returns status 500 when occurs an internal error', async () => {
+    (TeamModel.findAll as sinon.SinonStub).restore();
+
+    sinon
+      .stub(TeamModel, 'findAll')
+      .throws('errorObj');
+
+      chaiHttpResponse = await chai
+      .request(app)
+      .get('/leaderboard/home');
+
+    expect(chaiHttpResponse).to.have.status(500);
+    expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
+  });
+
+  it('Verify route "leaderboard/away" returns status 500 when occurs an internal error', async () => {
+    (TeamModel.findAll as sinon.SinonStub).restore();
+
+    sinon
+      .stub(TeamModel, 'findAll')
+      .throws('errorObj');
+
+      chaiHttpResponse = await chai
+      .request(app)
+      .get('/leaderboard/away');
+
+    expect(chaiHttpResponse).to.have.status(500);
+    expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
+  });
 });
