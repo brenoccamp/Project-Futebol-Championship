@@ -35,7 +35,7 @@ afterEach(async () => {
 });
 
 
-describe.skip(getRequirement(27), () => {
+describe(getRequirement(27), () => {
   it('Será avaliado que é possível alterar o resultado de uma partida', async () => {
     await page.waitForTimeout(puppeteerDefs.pause.brief);
 
@@ -90,7 +90,7 @@ describe.skip(getRequirement(27), () => {
   });
 });
 
-describe.skip(getRequirement(28), () => {
+describe(getRequirement(28), () => {
   it('Será avaliado que é possível finalizar uma partida em andamento', async () => {
     await page.waitForTimeout(puppeteerDefs.pause.brief);
 

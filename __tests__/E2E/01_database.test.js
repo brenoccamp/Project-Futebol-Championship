@@ -13,7 +13,7 @@ afterAll(async () => termSequelize(database));
 
 beforeEach(async () => dbReset());
 
-describe.skip(getRequirement(1), () => {
+describe(getRequirement(1), () => {
   it('O avaliador consultará os dados da tabela teams, verificando se ela contém os dados iniciais corretos', async () => {
     const resultQuery = await database.query(select.all.teams, { type: 'SELECT' });
     const resultQueryNormalize = normalize(resultQuery);
@@ -21,7 +21,7 @@ describe.skip(getRequirement(1), () => {
   });
 });
 
-describe.skip(getRequirement(2), () => {
+describe(getRequirement(2), () => {
   it('O avaliador consultará os dados da tabela matches, verificando se ela contém os dados iniciais corretos', async () => {
     const resultQuery = await database.query(select.all.matches, { type: 'SELECT' });
     const resultQueryNormalize = normalize(resultQuery);
@@ -29,7 +29,7 @@ describe.skip(getRequirement(2), () => {
   });
 });
 
-describe.skip(getRequirement(3), () => {
+describe(getRequirement(3), () => {
   it('O avaliador consultará os dados da tabela users, verificando se ela contém os dados iniciais corretos', async () => {
     const resultQuery = await database.query(select.all.users, { type: 'SELECT' });
     const resultQueryNormalize = normalize(resultQuery);
