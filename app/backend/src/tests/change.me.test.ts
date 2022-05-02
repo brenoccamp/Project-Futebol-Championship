@@ -12,7 +12,7 @@ import { IMatches } from '../interfaces/match';
 import { userFullData } from './_mocks_/userMocks';
 import { allTeams, team } from './_mocks_/teamMocks';
 import { allMatches, matchesInProgress, finishedMatches, match } from './_mocks_/matchMocks';
-import { generalLeaderboard } from './_mocks_/leaderboardMocks';
+import { generalLeaderboard, homeLeaderboard, awayLeaderboard } from './_mocks_/leaderboardMocks';
 
 chai.use(chaiHttp);
 
@@ -603,7 +603,7 @@ describe('TESTING ROUTE PATCH "/matches/:id"', () => {
   });
 });
 
-describe('TESTING ROUTE GET "/leaderboard"', () => {
+describe('TESTING ROUTE GET "/leaderboard", "leaderboard/home" and "leaderboard/away"', () => {
   let chaiHttpResponse: Response;
 
   before(async () => {
@@ -621,12 +621,21 @@ describe('TESTING ROUTE GET "/leaderboard"', () => {
     (MatchModel.findAll as sinon.SinonStub).restore();
   });
 
-  it('Verify if it returns status 200 with general leaderboard', async () => {
+  it('Verify if in route "/leaderboard" it returns status 200 with general leaderboard', async () => {
     chaiHttpResponse = await chai
       .request(app)
       .get('/leaderboard');
 
     expect(chaiHttpResponse).to.have.status(200);
     expect(chaiHttpResponse.body).to.be.deep.equal(generalLeaderboard);
+  });
+
+  it('Verify if in route "leaderboard/home" it returns status 200 with home leaderboard', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/leaderboard/home');
+    
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal(homeLeaderboard);
   });
 });
