@@ -338,6 +338,12 @@ describe('TESTING ROUTE GET "/matches"', () => {
   });
 
   it('Verify if it returns status 200 with only matches in progress', async () => {
+    (MatchModel.findAll as sinon.SinonStub).restore();
+
+    sinon
+      .stub(MatchModel, 'findAll')
+      .resolves(matchesInProgress as IMatches[]);
+
     chaiHttpResponse = await chai
       .request(app)
       .get('/matches')
@@ -348,6 +354,12 @@ describe('TESTING ROUTE GET "/matches"', () => {
   });
 
   it('Verify if it returns status 200 with only finished matches', async () => {
+    (MatchModel.findAll as sinon.SinonStub).restore();
+
+    sinon
+      .stub(MatchModel, 'findAll')
+      .resolves(finishedMatches as IMatches[]);
+
     chaiHttpResponse = await chai
       .request(app)
       .get('/matches')

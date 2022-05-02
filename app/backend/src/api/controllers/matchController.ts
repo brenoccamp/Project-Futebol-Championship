@@ -16,6 +16,7 @@ export default class MatchController implements IMatchController {
 
       if (inProgress) {
         const isInProgress = inProgress === 'true';
+
         const isMatchesInProgress = await this._matchService.getMatchesByProgress(isInProgress);
 
         return res.status(200).json(isMatchesInProgress);
