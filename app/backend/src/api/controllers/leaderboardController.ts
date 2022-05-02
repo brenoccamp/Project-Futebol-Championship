@@ -19,10 +19,10 @@ export default class LeaderboardController implements ILeaderboardController {
       const allTeams = await this._teamService.getAllTeams();
       const allMatches = await this._matchService.getMatchesByProgress(false);
 
-      const leaderboardObj = this._leaderboardService
-        .createHomeAndawayLeaderboards(allTeams, allMatches);
+      const allLeaderboards = this._leaderboardService
+        .generateAllLeaderboards(allTeams, allMatches);
 
-      return res.status(200).json(leaderboardObj.leaderboardHome);
+      return res.status(200).json(allLeaderboards.homeLeaderboard);
     } catch (err) {
       next(err);
     }
@@ -37,10 +37,28 @@ export default class LeaderboardController implements ILeaderboardController {
       const allTeams = await this._teamService.getAllTeams();
       const allMatches = await this._matchService.getMatchesByProgress(false);
 
-      const leaderboardObj = this._leaderboardService
-        .createHomeAndawayLeaderboards(allTeams, allMatches);
+      const allLeaderboards = this._leaderboardService
+        .generateAllLeaderboards(allTeams, allMatches);
 
-      return res.status(200).json(leaderboardObj.leaderboardAway);
+      return res.status(200).json(allLeaderboards.awayLeaderboard);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public generalLeaderboard = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<Response | void> => {
+    try {
+      const allTeams = await this._teamService.getAllTeams();
+      const allMatches = await this._matchService.getMatchesByProgress(false);
+
+      const allLeaderboards = this._leaderboardService
+        .generateAllLeaderboards(allTeams, allMatches);
+
+      return res.status(200).json(allLeaderboards.generalLeaderboard);
     } catch (err) {
       next(err);
     }

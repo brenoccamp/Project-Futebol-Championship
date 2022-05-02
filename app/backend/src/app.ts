@@ -124,6 +124,11 @@ class App {
 
   private leaderboardRoutes(): void {
     this.app.get(
+      '/leaderboard',
+      this._leaderboardController.generalLeaderboard,
+    );
+
+    this.app.get(
       '/leaderboard/home',
       this._leaderboardController.leaderboardHome,
     );

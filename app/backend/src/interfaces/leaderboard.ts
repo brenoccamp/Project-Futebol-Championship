@@ -29,6 +29,7 @@ export interface ITeamMatchesData {
   awayMatches: IMatchData;
   homeScores?: ITeamScoresData;
   awayScores?: ITeamScoresData;
+  generalScores?: ITeamScoresData;
 }
 
 export interface ITeamPerformance {
@@ -36,8 +37,9 @@ export interface ITeamPerformance {
 }
 
 export interface IHomeAndAwayLeaderboard {
-  leaderboardHome: ITeamScoresData[];
-  leaderboardAway: ITeamScoresData[];
+  homeLeaderboard: ITeamScoresData[];
+  awayLeaderboard: ITeamScoresData[];
+  generalLeaderboard: ITeamScoresData[];
 }
 
 export type MatchTypes = 'homeMatches' | 'awayMatches';
@@ -49,16 +51,12 @@ export interface IParamObj {
   scoreType: ScoreTypes;
 }
 
-// export interface ISortParams {
-//   teamPerformance: IHomeAndAwayLeaderboard;
-//   leaderboardToSort: string;
-// }
-
 export interface ILeaderboardController {
   leaderboardHome(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
   leaderboardAway(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
+  generalLeaderboard(req: Request, res: Response, next: NextFunction): Promise<Response | void>;
 }
 
 export interface ILeaderboardService {
-  createHomeAndawayLeaderboards(teams: ITeam[], matches: IMatches[]): IHomeAndAwayLeaderboard;
+  generateAllLeaderboards(teams: ITeam[], matches: IMatches[]): IHomeAndAwayLeaderboard;
 }

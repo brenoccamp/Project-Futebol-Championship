@@ -25,7 +25,7 @@ export default class LeaderboardService implements ILeaderboardService {
     return teamPerformance;
   };
 
-  private calcHomeAndAwayResults = (board:ITeamPerformance, games:IMatches[]):ITeamPerformance => {
+  private calcHomeAndAwayResults = (board:ITeamPerformance, games:IMatches[]): ITeamPerformance => {
     const teamPerformance = board;
 
     games.forEach((match) => {
@@ -52,7 +52,7 @@ export default class LeaderboardService implements ILeaderboardService {
     return teamPerformance;
   };
 
-  private calcScores = (paramObj: IParamObj): ITeamPerformance => {
+  private calcHomeAndAwayScores = (paramObj: IParamObj): ITeamPerformance => {
     const { teamPerformance, matchType, scoreType } = paramObj;
 
     Object.values(teamPerformance).forEach((teamData) => {
@@ -76,16 +76,43 @@ export default class LeaderboardService implements ILeaderboardService {
     return teamPerformance;
   };
 
+  private calcGeneralScores = (teamPerformance: ITeamPerformance): ITeamPerformance => {
+    const updatedPerformance = teamPerformance;
+
+    Object.values(updatedPerformance).forEach(({ name, homeScores, awayScores }) => {
+      updatedPerformance[name].generalScores = {
+        name,
+        totalPoints: Number(homeScores?.totalPoints) + Number(awayScores?.totalPoints),
+        totalGames: Number(homeScores?.totalGames) + Number(awayScores?.totalGames),
+        totalVictories: Number(homeScores?.totalVictories) + Number(awayScores?.totalVictories),
+        totalDraws: Number(homeScores?.totalDraws) + Number(awayScores?.totalDraws),
+        totalLosses: Number(homeScores?.totalLosses) + Number(awayScores?.totalLosses),
+        goalsFavor: Number(homeScores?.goalsFavor) + Number(awayScores?.goalsFavor),
+        goalsOwn: Number(homeScores?.goalsOwn) + Number(awayScores?.goalsOwn),
+        goalsBalance: Number(homeScores?.goalsBalance) + Number(awayScores?.goalsBalance),
+        efficiency: Number((((Number(homeScores?.totalPoints) + Number(awayScores?.totalPoints))
+          / ((Number(homeScores?.totalGames) + Number(awayScores?.totalGames)) * 3)) * 100)
+          .toFixed(2)) };
+    });
+
+    return updatedPerformance;
+  };
+
   private leaderboardsGenerate = (teamPerformance: ITeamPerformance): IHomeAndAwayLeaderboard => {
     const homeAndAwayLeaderboards = Object.values(teamPerformance)
       .reduce((acc: IHomeAndAwayLeaderboard, curr: ITeamMatchesData) => {
-        if (curr.homeScores && curr.awayScores) {
-          acc.leaderboardHome.push(curr.homeScores);
-          acc.leaderboardAway.push(curr.awayScores);
+        if (curr.homeScores && curr.awayScores && curr.generalScores) {
+          acc.homeLeaderboard.push(curr.homeScores);
+          acc.awayLeaderboard.push(curr.awayScores);
+          acc.generalLeaderboard.push(curr.generalScores);
         }
 
         return acc;
-      }, { leaderboardHome: [], leaderboardAway: [] } as IHomeAndAwayLeaderboard);
+      }, {
+        homeLeaderboard: [],
+        awayLeaderboard: [],
+        generalLeaderboard: [],
+      } as IHomeAndAwayLeaderboard);
 
     return homeAndAwayLeaderboards;
   };
@@ -103,7 +130,7 @@ export default class LeaderboardService implements ILeaderboardService {
     return leaderboardArray;
   };
 
-  public createHomeAndawayLeaderboards(teams:ITeam[], matches:IMatches[]): IHomeAndAwayLeaderboard {
+  public generateAllLeaderboards(teams:ITeam[], matches:IMatches[]): IHomeAndAwayLeaderboard {
     let teamPerformance;
 
     teamPerformance = this.generateTeamPerformanceObj(teams);
@@ -118,13 +145,15 @@ export default class LeaderboardService implements ILeaderboardService {
       teamPerformance, matchType: 'awayMatches', scoreType: 'awayScores',
     };
 
-    teamPerformance = this.calcScores(calcHomeScores);
-    teamPerformance = this.calcScores(calcAwayScores);
+    teamPerformance = this.calcHomeAndAwayScores(calcHomeScores);
+    teamPerformance = this.calcHomeAndAwayScores(calcAwayScores);
+    teamPerformance = this.calcGeneralScores(teamPerformance);
 
     teamPerformance = this.leaderboardsGenerate(teamPerformance);
 
-    teamPerformance.leaderboardHome = this.leaderboardsSort(teamPerformance.leaderboardHome);
-    teamPerformance.leaderboardAway = this.leaderboardsSort(teamPerformance.leaderboardAway);
+    teamPerformance.homeLeaderboard = this.leaderboardsSort(teamPerformance.homeLeaderboard);
+    teamPerformance.awayLeaderboard = this.leaderboardsSort(teamPerformance.awayLeaderboard);
+    teamPerformance.generalLeaderboard = this.leaderboardsSort(teamPerformance.generalLeaderboard);
 
     return teamPerformance;
   }
