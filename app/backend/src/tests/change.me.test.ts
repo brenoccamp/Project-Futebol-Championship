@@ -638,4 +638,13 @@ describe('TESTING ROUTE GET "/leaderboard", "leaderboard/home" and "leaderboard/
     expect(chaiHttpResponse).to.have.status(200);
     expect(chaiHttpResponse.body).to.be.deep.equal(homeLeaderboard);
   });
+
+  it('Verify if in route "leaderboard/away" it returns status 200 with away leaderboard', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/leaderboard/away');
+    
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal(awayLeaderboard);
+  });
 });
