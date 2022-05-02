@@ -12,6 +12,7 @@ import { IMatches } from '../interfaces/match';
 import { userFullData } from './_mocks_/userMocks';
 import { allTeams, team } from './_mocks_/teamMocks';
 import { allMatches, matchesInProgress, finishedMatches, match } from './_mocks_/matchMocks';
+import { generalLeaderboard } from './_mocks_/leaderboardMocks';
 
 chai.use(chaiHttp);
 
@@ -599,5 +600,33 @@ describe('TESTING ROUTE PATCH "/matches/:id"', () => {
 
     expect(chaiHttpResponse).to.have.status(500);
     expect(chaiHttpResponse.body.error).to.be.equal('Internal server error');
+  });
+});
+
+describe('TESTING ROUTE GET "/leaderboard"', () => {
+  let chaiHttpResponse: Response;
+
+  before(async () => {
+    sinon
+      .stub(TeamModel, 'findAll')
+      .resolves(allTeams as TeamModel[]);
+
+    sinon
+      .stub(MatchModel, 'findAll')
+      .resolves(finishedMatches as IMatches[]);
+  });
+
+  after(() => {
+    (TeamModel.findAll as sinon.SinonStub).restore();
+    (MatchModel.findAll as sinon.SinonStub).restore();
+  });
+
+  it('Verify if it returns status 200 with general leaderboard', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/leaderboard');
+
+    expect(chaiHttpResponse).to.have.status(200);
+    expect(chaiHttpResponse.body).to.be.deep.equal(generalLeaderboard);
   });
 });
