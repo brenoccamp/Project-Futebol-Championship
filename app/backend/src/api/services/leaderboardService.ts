@@ -119,13 +119,11 @@ export default class LeaderboardService implements ILeaderboardService {
 
   private leaderboardsSort = (leaderboardArray: ITeamScoresData[]): ITeamScoresData[] => {
     leaderboardArray
-      .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.goalsOwn > b.goalsOwn ? -1 : 1))
-      .sort((a:ITeamScoresData, b: ITeamScoresData) => (a.goalsFavor > b.goalsFavor ? -1 : 1))
-      .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.goalsBalance > b.goalsBalance ? -1 : 1))
-      .sort(
-        (a:ITeamScoresData, b:ITeamScoresData) => (a.totalVictories > b.totalVictories ? -1 : 1),
-      )
-      .sort((a:ITeamScoresData, b:ITeamScoresData) => (a.totalPoints > b.totalPoints ? -1 : 1));
+      .sort((a:ITeamScoresData, b:ITeamScoresData) => b.goalsOwn - a.goalsOwn)
+      .sort((a:ITeamScoresData, b: ITeamScoresData) => b.goalsFavor - a.goalsFavor)
+      .sort((a:ITeamScoresData, b:ITeamScoresData) => b.goalsBalance - a.goalsBalance)
+      .sort((a:ITeamScoresData, b:ITeamScoresData) => b.totalVictories - a.totalVictories)
+      .sort((a:ITeamScoresData, b:ITeamScoresData) => b.totalPoints - a.totalPoints);
 
     return leaderboardArray;
   };
