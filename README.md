@@ -1,4 +1,4 @@
-# Trybe Futebol Club
+# Project Futebol Championship
 
 Esta aplicação foi um dos projetos avaliativos do módulo de backend no curso de desenvolvimento web na Trybe. Nele recebi um frontend react pronto que exibe informações sobre partidas e classificações de futebol.
 
