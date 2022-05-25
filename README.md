@@ -51,7 +51,7 @@ Obs: Docker e Docker-Compose utilizados no desenvolvimento e execução deste pr
 Clone o projeto
 
 ```bash
-  git clone git@github.com:GabrielGaspar447/Trybe-Futebol-Clube.git
+  git@github.com:brenoccamp/Project-Futebol-Championship.git
 ```
 
 Entre no diretório do projeto
